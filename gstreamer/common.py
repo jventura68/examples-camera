@@ -87,7 +87,7 @@ class SVG:
         x2=x-w
         y2=y+h
         center = y+h/2
-        self.io.write(SVG_L_ARROW.format(x=x, y=y, x2=x2, y2=y2, cent = center, alpha=alpha))
+        self.io.write(SVG_L_ARROW.format(x=x, y=y, x2=x2, y2=y2, center = center, alpha=alpha))
 
     def _cam_ok(self, x, y, w, fill, alpha):
         x2=x+w
