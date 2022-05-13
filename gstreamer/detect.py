@@ -65,7 +65,8 @@ def generate_svg(src_size, inference_box, objs, labels, text_lines):
         label = '{}% {}'.format(percent, labels.get(obj.id, obj.id))
         svg.add_text(x, y - 5, label, 20)
         svg.add_rect(x, y, w, h, 'red', 2)
-        svg.add_left_arrow(x, y, w, h, 'green', 2)
+
+    svg.add_controls(left=False, cam_ok=False, right=True)
     return svg.finish()
 
 def main():
