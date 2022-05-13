@@ -65,7 +65,7 @@ class SVG:
         "arrow_w": 60
     }
     size = None
-    
+
     def __init__(self, size):
         self.io = io.StringIO()
         self.io.write(SVG_HEADER.format(w=size[0] , h=size[1]))
@@ -104,19 +104,19 @@ class SVG:
         alpha_right = 0.5 if right else 0.1
         alpha_cam_ok = 0.5 if cam_ok else 0.1
 
-        self.add_left_arrow(x=center-self.xy_control["sep"], 
+        self._add_left_arrow(x=center-self.xy_control["sep"], 
                             y=ymin, 
                             w=self.xy_control["arrow_w"],
                             h=self.xy_control["h"], 
                             alpha=alpha_left)
 
-        self.cam_ok(x=center-self.xy_control["sep"],
+        self._cam_ok(x=center-self.xy_control["sep"],
                     y=ymin,
                     w=self.xy_control["w"],
                     fill="green",
                     alpha=alpha_cam_ok)
 
-        self.add_left_arrow(x=center-self.xy_control["sep"], 
+        self._add_left_arrow(x=center-self.xy_control["sep"], 
                             y=ymin, 
                             w=self.xy_control["arrow_w"],
                             h=self.xy_control["h"], 
