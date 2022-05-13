@@ -101,9 +101,11 @@ class SVG:
         x_arrow_right  = center + self.xy_control["w"]
         x_cam_ok = center - self.xy_control["sep"]
 
-        alpha_left = 0.5 if left else 0.1
-        alpha_right = 0.5 if right else 0.1
-        alpha_cam_ok = 0.5 if cam_ok else 0.1
+        alpha_left = 0.3 if left else 0.1
+        alpha_right = 0.3 if right else 0.1
+        alpha_cam_ok = 0.3
+        cam_fill = "green" if cam_ok else "red"
+
 
         self._add_left_arrow(x=x_arrow_left, 
                             y=y, 
@@ -114,7 +116,7 @@ class SVG:
         self._cam_ok(x=x_cam_ok,
                     y=y,
                     w=self.xy_control["w"],
-                    fill="green",
+                    fill=cam_fill,
                     alpha=alpha_cam_ok)
 
         self._add_right_arrow(x=x_arrow_right, 
