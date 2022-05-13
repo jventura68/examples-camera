@@ -29,6 +29,7 @@ python3 detect.py \
 import argparse
 import cv2
 import os
+import logging
 
 from pycoral.adapters.common import input_size
 from pycoral.adapters.detect import get_objects
@@ -36,6 +37,7 @@ from pycoral.utils.dataset import read_label_file
 from pycoral.utils.edgetpu import make_interpreter
 from pycoral.utils.edgetpu import run_inference
 
+LEVELS = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
 def main():
     default_model_dir = '../all_models'
     default_model = 'mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite'
@@ -50,18 +52,27 @@ def main():
     parser.add_argument('--camera_idx', type=int, help='Index of which video source to use. ', default = 0)
     parser.add_argument('--threshold', type=float, default=0.1,
                         help='classifier score threshold')
+    parser.add_argument('--log', default="INFO",
+                        help="|".join(LEVELS))
     args = parser.parse_args()
-
-    print('Loading {} with {} labels.'.format(args.model, args.labels))
+    
+    numeric_level = LEVELS.index(args.log)
+    logging.basicConfig(level=numeric_level)
+    
+    logging.info('Loading {} with {} labels.'.format(args.model, args.labels))
     interpreter = make_interpreter(args.model)
     interpreter.allocate_tensors()
     labels = read_label_file(args.labels)
     inference_size = input_size(interpreter)
 
+    logging.debug('Antes de definir la entrada de video')
     cap = cv2.VideoCapture(args.camera_idx)
-
+    logging.debug('Despues de definir la entrada de video')
+    logging.debug(f"Video capture: {cap.isOpened()}")
     while cap.isOpened():
         ret, frame = cap.read()
+        logging.debug(f"ret: {str(ret)}")
+
         if not ret:
             break
         cv2_im = frame
