@@ -98,6 +98,8 @@ def main():
     fps_counter = avg_fps_counter(30)
 
     def user_callback(input_tensor, src_size, inference_box):
+      print("size:", src_size)
+      print("box:", inference_box)
       nonlocal fps_counter
       start_time = time.monotonic()
       run_inference(interpreter, input_tensor)
@@ -108,7 +110,7 @@ def main():
           'Inference: {:.2f} ms'.format((end_time - start_time) * 1000),
           'FPS: {} fps'.format(round(next(fps_counter))),
       ]
-      print(' '.join(text_lines))
+      #print(' '.join(text_lines))
       return generate_svg(src_size, inference_box, objs, labels, text_lines)
 
     result = gstreamer.run_pipeline(user_callback,
