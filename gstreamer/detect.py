@@ -54,6 +54,9 @@ def generate_svg(src_size, inference_box, objs, labels, text_lines):
     for y, line in enumerate(text_lines, start=1):
         svg.add_text(10, y * 20, line, 20)
     cam_ok = False
+    left_mov = False
+    right_mov = False
+    
     for obj in objs:
         cam_ok = True
         bbox = obj.bbox
