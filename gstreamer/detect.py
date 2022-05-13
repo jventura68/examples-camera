@@ -47,10 +47,15 @@ def generate_svg(src_size, inference_box, objs, labels, text_lines):
     src_w, src_h = src_size
     box_x, box_y, box_w, box_h = inference_box
     scale_x, scale_y = src_w / box_w, src_h / box_h
+    out_range = box_w /4
+    out_left = out_range
+    out_right = box_x + out_range
 
     for y, line in enumerate(text_lines, start=1):
         svg.add_text(10, y * 20, line, 20)
+    cam_ok = False
     for obj in objs:
+        cam_ok = True
         bbox = obj.bbox
         if not bbox.valid:
             continue
@@ -61,12 +66,15 @@ def generate_svg(src_size, inference_box, objs, labels, text_lines):
         x, y = x - box_x, y - box_y
         # Scale to source coordinate space.
         x, y, w, h = x * scale_x, y * scale_y, w * scale_x, h * scale_y
+        left_mov = x < out_left
+        right_mov = x+w > out_right
         percent = int(100 * obj.score)
         label = '{}% {}'.format(percent, labels.get(obj.id, obj.id))
         svg.add_text(x, y - 5, label, 20)
         svg.add_rect(x, y, w, h, 'red', 2)
 
-    svg.add_controls(left=False, cam_ok=False, right=True)
+
+    svg.add_controls(left=left_mov, cam_ok=cam_ok, right=right_mov)
     return svg.finish()
 
 def main():
