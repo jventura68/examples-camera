@@ -117,7 +117,7 @@ class SVG:
                     fill="green",
                     alpha=alpha_cam_ok)
 
-        self._add_left_arrow(x=x_arrow_right, 
+        self._add_right_arrow(x=x_arrow_right, 
                             y=y, 
                             w=self.xy_control["arrow_w"],
                             h=self.xy_control["h"], 
