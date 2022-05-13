@@ -99,8 +99,6 @@ def main():
     fps_counter = avg_fps_counter(30)
 
     def user_callback(input_tensor, src_size, inference_box):
-      print("size:", src_size)
-      print("box:", inference_box)
       nonlocal fps_counter
       start_time = time.monotonic()
       run_inference(interpreter, input_tensor)

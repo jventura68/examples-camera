@@ -87,7 +87,7 @@ class SVG:
         x2=x-w
         y2=y+h
         center = y+h/2
-        self.io.write(SVG_R_ARROW.format(x=x, y=y, x2=x2, y2=y2, center=center, alpha=alpha))
+        self.io.write(SVG_R_ARROW.format(x=x, y=y, x2=x2, y2=y2, cent = center - self.xy_control["sep"]er=center, alpha=alpha))
 
     def _cam_ok(self, x, y, w, fill, alpha):
         x2=x+w
@@ -96,31 +96,32 @@ class SVG:
 
     def add_controls (self, left=False, cam_ok=False, right=False):
         center = self.size[0]/2
-        ymin = self.size[1] - self.xy_control["sep"] - self.xy_control["h"]
-        ymax = ymin + self.xy_control["h"]
-        arrow_w = self.xy_control["w"]
+        y = self.size[1] - self.xy_control["sep"] - self.xy_control["h"]
+        x_arrow_left = center - self.xy_control["w"]
+        x_arrow_right  = center + self.xy_control["w"]
+        x_cam_ok = center - self.xy_control["sep"]
 
         alpha_left = 0.5 if left else 0.1
         alpha_right = 0.5 if right else 0.1
         alpha_cam_ok = 0.5 if cam_ok else 0.1
 
-        self._add_left_arrow(x=center-self.xy_control["sep"], 
-                            y=ymin, 
+        self._add_left_arrow(x=x_arrow_left, 
+                            y=y, 
                             w=self.xy_control["arrow_w"],
                             h=self.xy_control["h"], 
                             alpha=alpha_left)
 
-        self._cam_ok(x=center-self.xy_control["sep"],
-                    y=ymin,
+        self._cam_ok(x=x_cam_ok,
+                    y=y,
                     w=self.xy_control["w"],
                     fill="green",
                     alpha=alpha_cam_ok)
 
-        self._add_left_arrow(x=center-self.xy_control["sep"], 
-                            y=ymin, 
+        self._add_left_arrow(x=x_arrow_right, 
+                            y=y, 
                             w=self.xy_control["arrow_w"],
                             h=self.xy_control["h"], 
-                            alpha=alpha_left)
+                            alpha=alpha_right)
 
     def finish(self):
         self.io.write(SVG_FOOTER)
