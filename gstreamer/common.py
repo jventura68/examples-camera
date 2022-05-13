@@ -101,9 +101,9 @@ class SVG:
         x_arrow_right  = center + self.xy_control["w"]
         x_cam_ok = center - self.xy_control["sep"]
 
-        alpha_left = 0.3 if left else 0.1
-        alpha_right = 0.3 if right else 0.1
-        alpha_cam_ok = 0.3
+        alpha_left = 0.4 if left else 0.1
+        alpha_right = 0.4 if right else 0.1
+        alpha_cam_ok = 0.4 if cam_ok else 0.7
         cam_fill = "green" if cam_ok else "red"
 
 
