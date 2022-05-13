@@ -77,7 +77,7 @@ class SVG:
     def add_text(self, x, y, text, font_size):
         self.io.write(SVG_TEXT.format(x=x, y=y, t=text, fs=font_size))
 
-    def _add_rigth_arrow(self, x, y, w, h, alpha):
+    def _add_right_arrow(self, x, y, w, h, alpha):
         x2=x+w
         y2=y+h
         center = y+h/2
