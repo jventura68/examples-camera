@@ -25,6 +25,10 @@ SVG_TEXT = '''
 '''
 SVG_FOOTER = '</svg>'
 
+SVG_L_ARROW = '''
+         <rect x="20" y="20" width="10" height="10" stroke="{s}" stroke-width="{sw} 
+         style="fill-opacity: .25;"/>'''
+
 def avg_fps_counter(window_size):
     window = collections.deque(maxlen=window_size)
     prev = time.monotonic()
@@ -37,6 +41,10 @@ def avg_fps_counter(window_size):
         yield len(window) / sum(window)
 
 class SVG:
+    lef_arrow = {
+        'x': 10,
+        'y': 10,
+    }
     def __init__(self, size):
         self.io = io.StringIO()
         self.io.write(SVG_HEADER.format(w=size[0] , h=size[1]))
@@ -46,6 +54,9 @@ class SVG:
 
     def add_text(self, x, y, text, font_size):
         self.io.write(SVG_TEXT.format(x=x, y=y, t=text, fs=font_size))
+
+    def add_left_arrow(self, x, y, w, h, stroke, stroke_width):
+        self.io.write(SVG_L_ARROW.format(x=x, y=y, w=w, h=h, s=stroke, sw=stroke_width))
 
     def finish(self):
         self.io.write(SVG_FOOTER)
