@@ -56,7 +56,7 @@ def generate_svg(src_size, inference_box, objs, labels, text_lines):
     cam_ok = False
     left_mov = False
     right_mov = False
-    
+
     for obj in objs:
         cam_ok = True
         bbox = obj.bbox
@@ -71,6 +71,7 @@ def generate_svg(src_size, inference_box, objs, labels, text_lines):
         x, y, w, h = x * scale_x, y * scale_y, w * scale_x, h * scale_y
         left_mov = x < out_left
         right_mov = x+w > out_right
+        print (f"x={x}, y={y}, w={w}, h={h}, out_left={out_left}, out_right={out_right}, box_w={box_w}, left_mov={left_mov}, right_mov={right_mov}")
         percent = int(100 * obj.score)
         label = '{}% {}'.format(percent, labels.get(obj.id, obj.id))
         svg.add_text(x, y - 5, label, 20)
