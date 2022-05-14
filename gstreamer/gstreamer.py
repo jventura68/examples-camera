@@ -248,7 +248,9 @@ def run_pipeline(user_function,
             """
             #output = "glimagesink fullscreen=true qos=false sync=false"
             #output = "matroskamux ! filesink location=gopro2.mkv"
-            output = "udpsink host={host} port={port} qos=false sync=false"\
+            output = """
+                videoconvert ! x264enc tune=zerolatency speed-preset=ultrafast ! h264parse ! 
+                mpegtsmux ! udpsink host={host} port={port} qos=false sync=false """\
                      .format(host=HOST, port=PORT)
             scale_caps = 'video/x-raw,format=BGRA,width={w},height={h}'.format(w=src_size[0], h=src_size[1])
         else:
