@@ -47,7 +47,7 @@ def generate_svg(src_size, inference_box, objs, labels, text_lines):
     src_w, src_h = src_size
     box_x, box_y, box_w, box_h = inference_box
     scale_x, scale_y = src_w / box_w, src_h / box_h
-    out_range = src_w /4
+    out_range = src_w /3
     out_left = out_range
     out_right = src_w - out_range
 

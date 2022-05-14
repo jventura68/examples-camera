@@ -228,6 +228,7 @@ def run_pipeline(user_function,
                     ! {src_caps} ! {leaky_q} """ % (videosrc, demux)
 
     coral = get_dev_board_model()
+    print("Coral board model: %s" % coral)
     if headless:
         scale = min(appsink_size[0] / src_size[0], appsink_size[1] / src_size[1])
         scale = tuple(int(x * scale) for x in src_size)

@@ -89,9 +89,9 @@ class SVG:
         center = y+h/2
         self.io.write(SVG_L_ARROW.format(x=x, y=y, x2=x2, y2=y2, center = center, alpha=alpha))
 
-    def _cam_ok(self, x, y, w, fill, alpha):
+    def _cam_ok(self, x, y, w, h, fill, alpha):
         x2=x+w
-        y2=y+w
+        y2=y+h
         self.io.write(SVG_OK.format(x=x, y=y, w=40, fill=fill, alpha=alpha))
 
     def add_controls (self, left=False, cam_ok=False, right=False):
@@ -116,6 +116,7 @@ class SVG:
         self._cam_ok(x=x_cam_ok,
                     y=y,
                     w=self.xy_control["w"],
+                    h=self.xy_control["w"],
                     fill=cam_fill,
                     alpha=alpha_cam_ok)
 
@@ -124,6 +125,8 @@ class SVG:
                             w=self.xy_control["arrow_w"],
                             h=self.xy_control["h"], 
                             alpha=alpha_right)
+
+        self._cam_ok (x=0, y=470, w=640, h=8, fill="yellow", alpha=1)
 
     def finish(self):
         self.io.write(SVG_FOOTER)
