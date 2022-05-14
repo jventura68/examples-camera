@@ -78,7 +78,7 @@ def generate_svg(src_size, inference_box, objs, labels, text_lines):
         svg.add_rect(x, y, w, h, 'red', 2)
 
 
-    svg.add_controls(left=left_mov, cam_ok=cam_ok, right=right_mov)
+    svg.add_controls(left=left_mov, cam_ok=cam_ok, right=right_mov, bounds=(out_left, out_right))
     return svg.finish()
 
 def main():

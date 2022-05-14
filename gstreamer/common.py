@@ -89,12 +89,12 @@ class SVG:
         center = y+h/2
         self.io.write(SVG_L_ARROW.format(x=x, y=y, x2=x2, y2=y2, center = center, alpha=alpha))
 
-    def _cam_ok(self, x, y, w, h, fill, alpha):
+    def _block(self, x, y, w, h, fill, alpha):
         x2=x+w
         y2=y+h
         self.io.write(SVG_OK.format(x=x, y=y, w=w, h=h, fill=fill, alpha=alpha))
 
-    def add_controls (self, left=False, cam_ok=False, right=False):
+    def add_controls (self, left=False, cam_ok=False, right=False, bounds=None):
         center = self.size[0]/2
         y = self.size[1] - self.xy_control["sep"] - self.xy_control["h"]
         x_arrow_left = center - self.xy_control["w"]
@@ -113,7 +113,7 @@ class SVG:
                             h=self.xy_control["h"], 
                             alpha=alpha_left)
 
-        self._cam_ok(x=x_cam_ok,
+        self._block(x=x_cam_ok,
                     y=y,
                     w=self.xy_control["w"],
                     h=self.xy_control["w"],
@@ -125,8 +125,20 @@ class SVG:
                             w=self.xy_control["arrow_w"],
                             h=self.xy_control["h"], 
                             alpha=alpha_right)
+        if bounds:
+            self._block(x=0,
+                        y=0,
+                        w=bounds[0],
+                        h=self.size[1],
+                        fill="red",
+                        alpha=0.2)
+            self._block(x=bounds[1],
+                        y=0,
+                        w=self.size[0]-bounds[1],
+                        h=self.size[1],
+                        fill="red",
+                        alpha=0.2)
 
-        self._cam_ok (x=0, y=self.size[1]-10, w=self.size[0], h=4, fill="yellow", alpha=1)
 
     def finish(self):
         self.io.write(SVG_FOOTER)
