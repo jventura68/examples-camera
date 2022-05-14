@@ -17,6 +17,13 @@ import collections
 import io
 import time
 
+ALPHA_LOW = 0.3
+ALPHA_HIGH = 0.8
+
+NOT_DETECT_COLOR = "red"
+DETECT_COLOR = "green"
+MOVE_COLOR = "red"
+BACKGROUND_COLOR = "gray"
 SVG_HEADER = '<svg width="{w}" height="{h}" version="1.1" >'
 SVG_RECT = '<rect x="{x}" y="{y}" width="{w}" height="{h}" stroke="{s}" stroke-width="{sw}" fill="none" />'
 SVG_TEXT = '''
@@ -101,10 +108,10 @@ class SVG:
         x_arrow_right  = center + self.xy_control["w"]
         x_cam_ok = center - self.xy_control["sep"]
 
-        alpha_left = 0.4 if left else 0.1
-        alpha_right = 0.4 if right else 0.1
-        alpha_cam_ok = 0.4 if cam_ok else 0.7
-        cam_fill = "green" if cam_ok else "red"
+        alpha_left = ALPHA_HIGH if left else ALPHA_LOW
+        alpha_right = ALPHA_HIGH if right else ALPHA_LOW
+        alpha_cam_ok = ALPHA_HIGH *2/3 if cam_ok else ALPHA_HIGH
+        cam_fill = DETECT_COLOR if cam_ok else NOT_DETECT_COLOR
 
 
         self._add_left_arrow(x=x_arrow_left, 
@@ -130,14 +137,14 @@ class SVG:
                         y=0,
                         w=bounds[0],
                         h=self.size[1],
-                        fill="red",
-                        alpha=0.2)
+                        fill=BACKGROUND_COLOR,
+                        alpha=0.1)
             self._block(x=bounds[1],
                         y=0,
                         w=self.size[0]-bounds[1],
                         h=self.size[1],
-                        fill="red",
-                        alpha=0.2)
+                        fill=BACKGROUND_COLOR,
+                        alpha=0.1)
 
 
     def finish(self):
