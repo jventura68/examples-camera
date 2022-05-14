@@ -208,6 +208,8 @@ def run_pipeline(user_function,
                  videosrc='/dev/video1',
                  videofmt='raw',
                  headless=False):
+    HOST='192.168.1.185' ## Destino del vídeo
+    PORT='5000'
     if videofmt == 'h264':
         SRC_CAPS = 'video/x-h264,width={width},height={height},framerate=30/1'
     elif videofmt == 'jpeg':
@@ -242,15 +244,19 @@ def run_pipeline(user_function,
               glupload ! glcolorconvert ! video/x-raw(memory:GLMemory),format=RGBA !
               tee name=t
                 t. ! queue ! glfilterbin filter=glbox name=glbox ! queue ! {sink_caps} ! {sink_element}
-                t. ! queue ! glsvgoverlay name=gloverlay sync=false ! glimagesink fullscreen=true
-                     qos=false sync=false
+                t. ! queue ! glsvgoverlay name=gloverlay sync=false ! {output}
             """
+            #output = "glimagesink fullscreen=true qos=false sync=false"
+            #output = "matroskamux ! filesink location=gopro2.mkv"
+            output = "udpsink host={host} port={port} qos=false sync=false"\
+                     .format(host=HOST, port=PORT)
             scale_caps = 'video/x-raw,format=BGRA,width={w},height={h}'.format(w=src_size[0], h=src_size[1])
         else:
             PIPELINE += """ ! decodebin ! glupload ! tee name=t
                 t. ! queue ! glfilterbin filter=glbox name=glbox ! {sink_caps} ! {sink_element}
-                t. ! queue ! glsvgoverlaysink name=overlaysink
+                t. ! queue ! {output}
             """
+            output = "glsvgoverlaysink name=overlaysink"
             scale_caps = None
     else:
         scale = min(appsink_size[0] / src_size[0], appsink_size[1] / src_size[1])
@@ -260,18 +266,21 @@ def run_pipeline(user_function,
             t. ! {leaky_q} ! videoconvert ! videoscale ! {scale_caps} ! videobox name=box autocrop=true
                ! {sink_caps} ! {sink_element}
             t. ! {leaky_q} ! videoconvert
-               ! rsvgoverlay name=overlay ! videoconvert ! ximagesink sync=false
+               ! rsvgoverlay name=overlay ! videoconvert ! {output}
             """
+        output = "ximagesink sync=false"
 
     SINK_ELEMENT = 'appsink name=appsink emit-signals=true max-buffers=1 drop=true'
     SINK_CAPS = 'video/x-raw,format=RGB,width={width},height={height}'
     LEAKY_Q = 'queue max-size-buffers=1 leaky=downstream'
 
+
     src_caps = SRC_CAPS.format(width=src_size[0], height=src_size[1])
     sink_caps = SINK_CAPS.format(width=appsink_size[0], height=appsink_size[1])
     pipeline = PIPELINE.format(leaky_q=LEAKY_Q,
         src_caps=src_caps, sink_caps=sink_caps,
-        sink_element=SINK_ELEMENT, scale_caps=scale_caps)
+        sink_element=SINK_ELEMENT, scale_caps=scale_caps,
+        output=output)
 
     print('Gstreamer pipeline:\n', pipeline)
 

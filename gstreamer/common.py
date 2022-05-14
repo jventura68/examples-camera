@@ -110,7 +110,7 @@ class SVG:
 
         alpha_left = ALPHA_HIGH if left else ALPHA_LOW
         alpha_right = ALPHA_HIGH if right else ALPHA_LOW
-        alpha_cam_ok = ALPHA_HIGH *2/3 if cam_ok else ALPHA_HIGH
+        alpha_cam_ok = ALPHA_HIGH
         cam_fill = DETECT_COLOR if cam_ok else NOT_DETECT_COLOR
 
 
