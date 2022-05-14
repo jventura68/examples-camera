@@ -38,7 +38,7 @@ SVG_L_ARROW = '''
 </polygon>'''
 
 SVG_OK = '''
-<rect x="{x}" y="{y}" width="{w}" height="{w}" 
+<rect x="{x}" y="{y}" width="{w}" height="{h}" 
       stroke="none" fill="{fill}" 
       style="fill-opacity: {alpha};"/>
 '''
@@ -92,7 +92,7 @@ class SVG:
     def _cam_ok(self, x, y, w, h, fill, alpha):
         x2=x+w
         y2=y+h
-        self.io.write(SVG_OK.format(x=x, y=y, w=40, fill=fill, alpha=alpha))
+        self.io.write(SVG_OK.format(x=x, y=y, w=w, h=h, fill=fill, alpha=alpha))
 
     def add_controls (self, left=False, cam_ok=False, right=False):
         center = self.size[0]/2
@@ -126,7 +126,7 @@ class SVG:
                             h=self.xy_control["h"], 
                             alpha=alpha_right)
 
-        self._cam_ok (x=0, y=470, w=640, h=8, fill="yellow", alpha=1)
+        self._cam_ok (x=0, y=self.size[1]-10, w=self.size[0], h=4, fill="yellow", alpha=1)
 
     def finish(self):
         self.io.write(SVG_FOOTER)
