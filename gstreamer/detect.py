@@ -163,7 +163,8 @@ def send_command(command, value):
         # print("longitud", len(leido), "texto",leido)
 
     def send_pwm(pos):
-        dc = .05 + 0.05 * pos / 180
+        #dc = .05 + 0.05 * pos / 180
+        dc = 0.03 + 0.0725 * pos / 180
         print("---> Hacia PWM. Grados:",pos,"Duty cycle:",round(dc,3),"-",round(dc*20,2))
         pwm0.duty_cycle = dc
 
