@@ -145,6 +145,7 @@ pwm0.duty_cycle = 0.075 #90 grados
 pwm0.enable()
 
 pos_motor = 90
+print("---> Motor inicializado")
 
 def send_command(command, value):
 
@@ -153,7 +154,7 @@ def send_command(command, value):
     global pwm0
 
     def send_serial(uart, text):
-        print ("To serial port:", text)
+        #print ("To serial port:", text)
         text += "\n"
         uart.write(text.encode())
         uart.flush()
@@ -163,7 +164,7 @@ def send_command(command, value):
 
     def send_pwm(pos):
         dc = .05 + 0.05 * pos / 180
-        print("Hacia PWM. Grados:",pos,"Duty cycle:",dc)
+        print("---> Hacia PWM. Grados:",pos,"Duty cycle:",round(dc,3),"-",round(dc*20,2))
         pwm0.duty_cycle = dc
 
 
@@ -184,7 +185,8 @@ def send_command(command, value):
             send_serial(uart1, 'BI')
         else:
             send_serial(uart1, 'BD')
-
+    elif command == 'init':
+        send_serial(uart1, 'IN')
 
 def main():
     default_model_dir = '../all_models'
