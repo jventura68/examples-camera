@@ -81,6 +81,50 @@ def generate_svg(src_size, inference_box, objs, labels, text_lines):
     svg.add_controls(left=left_mov, cam_ok=cam_ok, right=right_mov, bounds=(out_left, out_right))
     return svg.finish()
 
+def objects_analysis(inference_box, objs, labels):
+    """
+    Realiza los calculos para determinar la posición del balon y 
+    la necesidad de movimiento del motor para centrar la escena
+
+    Args:
+      inference_box: Tamaño de la imagen analizada
+      objs: Lista de objetos detectados
+      labels: Diccionario con los nombres de los objetos
+
+    Returns:
+      dict: Diccionario con los resultados de la detección
+        
+        time: Time of analysis
+        x,y,w,h: Coordenadas y tamaño del objeto respecto a inference_box
+        object_detected: True or False
+        angle: Ángulo de giro del motor
+    """
+    box_x, box_y, box_w, box_h = inference_box
+    x, y, w, h = 0, 0, 0, 0
+    d, angle = 0, 0
+    objects = False
+
+    for obj in objs:
+        objects = True
+        bbox = obj.bbox
+        if not bbox.valid:
+            continue
+        # Absolute coordinates, input tensor space.
+        x, y = bbox.xmin, bbox.ymin
+        w, h = bbox.width, bbox.height
+        # Subtract boxing offset.
+        x, y = x - box_x, y - box_y
+
+        d = x - box_w/2
+        angle = 2*d / box_w * 42
+    
+    return {
+        'time': time.monotonic(),
+        'x': x, 'y': y, 'w': w, 'h': h,
+        'object_detected': objects,
+        'd': d, 'angle': angle
+    }
+
 def main():
     default_model_dir = '../all_models'
     default_model = 'mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite'
@@ -109,9 +153,13 @@ def main():
 
     # Average fps over last 30 frames.
     fps_counter = avg_fps_counter(30)
+    last_detection_time = time.monotonic()
+    sec_to_init_panic_time = 10
+
 
     def user_callback(input_tensor, src_size, inference_box):
       nonlocal fps_counter
+      nonlocal sec_to_init_panic_time
       start_time = time.monotonic()
       run_inference(interpreter, input_tensor)
       # For larger input image sizes, use the edgetpu.classification.engine for better performance
@@ -121,7 +169,11 @@ def main():
           'Inference: {:.2f} ms'.format((end_time - start_time) * 1000),
           'FPS: {} fps'.format(round(next(fps_counter))),
       ]
+      
       #print(' '.join(text_lines))
+      state = objects_analysis(src_size, inference_box, objs, labels)
+      print(state)
+
       return generate_svg(src_size, inference_box, objs, labels, text_lines)
 
     result = gstreamer.run_pipeline(user_callback,
