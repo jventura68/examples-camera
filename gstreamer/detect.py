@@ -136,7 +136,7 @@ def objects_analysis(inference_box, objs, labels):
         'd': round(d,2), 'angle': round(angle)
     }
 
-uart1 = Serial("/dev/ttyS1", 9600) #115200
+uart1 = Serial("/dev/ttyS1", 115200) #115200
 
 #Init pwm
 pwm0 = PWM(0, 0)
@@ -171,10 +171,10 @@ def send_command(command, value):
 
         
     if command == 'move':
-        pos_motor += value
-        pos_motor = min(180, pos_motor)
-        pos_motor = max(0, pos_motor)
-        send_pwm (pos_motor)
+        # pos_motor += value
+        # pos_motor = min(180, pos_motor)
+        # pos_motor = max(0, pos_motor)
+        # send_pwm (pos_motor)
 
         v = str(abs(value)).zfill(2)
         if value < 0:
@@ -186,8 +186,6 @@ def send_command(command, value):
             send_serial(uart1, 'BI')
         else:
             send_serial(uart1, 'BD')
-    elif command == 'init':
-        send_serial(uart1, 'IN')
 
 def main():
     default_model_dir = '../all_models'
