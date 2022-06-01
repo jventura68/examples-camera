@@ -144,7 +144,8 @@ def send_command(command, value):
 
     def send_serial(uart, text):
         print ("To serial port:", text)
-        uart.write(text+"\n".encode())
+        text += "\n"
+        uart.write(text.encode())
         uart.flush()
         
     if command == 'move':
