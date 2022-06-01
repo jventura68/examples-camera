@@ -31,7 +31,6 @@ python3 detect.py \
   --labels ${TEST_DATA}/coco_labels.txt
 """
 import argparse
-from msilib.schema import ServiceInstall
 import gstreamer
 import os
 import time
@@ -92,21 +91,7 @@ def generate_svg(src_size, inference_box, objs, labels, text_lines):
     svg.add_controls(left=left_mov, cam_ok=cam_ok, right=right_mov, bounds=(out_left, out_right))
     return svg.finish()
 
-def objects_analysis(inference_box, objs, labels):
-    """
-    Realiza los calculos para determinar la posición del balon y 
-    la necesidad de movimiento del motor para centrar la escena
-
-    Args:
-      inference_box: Tamaño de la imagen analizada
-      objs: Lista de objetos detectados
-      labels: Diccionario con los nombres de los objetos
-
-    Returns:
-      dict: Diccionario con los resultados de la detección
-        
-        time: Time of analysis
-        x,y,w,h: Coordenadas y tamaño del objeto respecto a inference_box
+def objects_analysis(inference_box, objs, lfrom periphery import Serialbjeto respecto a inference_box
         object_detected: True or False
         angle: Ángulo de giro del motor
     """
