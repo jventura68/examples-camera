@@ -171,8 +171,8 @@ def send_command(command, value):
         
     if command == 'move':
         pos_motor += value
-        pos_motor = min(130, pos_motor)
-        pos_motor = max(50, pos_motor)
+        pos_motor = min(180, pos_motor)
+        pos_motor = max(0, pos_motor)
         send_pwm (pos_motor)
 
         v = str(abs(value)).zfill(2)
