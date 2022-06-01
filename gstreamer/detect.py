@@ -52,7 +52,6 @@ from pycoral.utils.edgetpu import run_inference
 from periphery import Serial
 
 
-uart0 = Serial("/dev/ttyS0", 9600) #115200
 
 def generate_svg(src_size, inference_box, objs, labels, text_lines):
     svg = SVG(src_size)
@@ -138,9 +137,11 @@ def objects_analysis(inference_box, objs, labels):
         'd': d, 'angle': angle
     }
 
+uart0 = Serial("/dev/ttyS0", 9600) #115200
+
 def send_command(command, value):
 
-    nonlocal uart0 
+    global uart0 
 
     def send_serial(uart, text):
         print ("To serial port:", text)
