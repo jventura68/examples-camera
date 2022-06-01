@@ -153,6 +153,11 @@ def send_command(command, value):
             send_serial(uart1, 'I'+v)
         else:
             send_serial(uart1, 'D'+v)
+    elif command == 'scan':
+        if value < 0:
+            send_serial(uart1, 'BI')
+        else:
+            send_serial(uart1, 'BD')
 
 def main():
     default_model_dir = '../all_models'
@@ -183,6 +188,7 @@ def main():
     # Average fps over last 30 frames.
     fps_counter = avg_fps_counter(30)
     last_detection_time = time.monotonic()
+    last_angle = 0
 
 
     def user_callback(input_tensor, src_size, inference_box):
@@ -199,8 +205,14 @@ def main():
         
         #print(' '.join(text_lines))
         state = objects_analysis(inference_box, objs, labels)
-        if abs(state['angle']) > MIN_DEGREE_TO_MOVE:
-            send_command("move", state['angle'])
+        if objs:
+            last_detection_time = end_time
+            last_angle = state['angle']
+            if abs(state['angle']) > MIN_DEGREE_TO_MOVE:
+                send_command("move", state['angle'])
+        else:
+            if (end_time - last_detection_time)*10e6 > SEC_PANIC_TIME:
+                send_command("scan", last_angle)
 
         return generate_svg(src_size, inference_box, objs, labels, text_lines)
 
