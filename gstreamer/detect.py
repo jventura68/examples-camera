@@ -31,9 +31,16 @@ python3 detect.py \
   --labels ${TEST_DATA}/coco_labels.txt
 """
 import argparse
+from msilib.schema import ServiceInstall
 import gstreamer
 import os
 import time
+import math
+
+MIN_DEGREE_TO_MOVE = 5
+CAMERA_ANGLE_VISION = 84
+MID_CAMERA_ANGLE_VISION = CAMERA_ANGLE_VISION / 2
+SEC_PANIC_TIME = 10
 
 from common import avg_fps_counter, SVG
 from pycoral.adapters.common import input_size
@@ -41,6 +48,11 @@ from pycoral.adapters.detect import get_objects
 from pycoral.utils.dataset import read_label_file
 from pycoral.utils.edgetpu import make_interpreter
 from pycoral.utils.edgetpu import run_inference
+
+from periphery import Serial
+
+
+uart0 = Serial("/dev/ttyS0", 9600) #115200
 
 def generate_svg(src_size, inference_box, objs, labels, text_lines):
     svg = SVG(src_size)
@@ -117,7 +129,7 @@ def objects_analysis(inference_box, objs, labels):
 
         # Centro del balón - centro pantalla.
         d = (x+w/2) - box_w/2
-        angle = 2*d / box_w * 42
+        angle = 2*d / box_w * MID_CAMERA_ANGLE_VISION
     
     return {
         'time': time.monotonic(),
@@ -125,6 +137,22 @@ def objects_analysis(inference_box, objs, labels):
         'object_detected': objects,
         'd': d, 'angle': angle
     }
+
+def send_command(command, value):
+
+    nonlocal uart0 
+
+    def send_serial(uart, text):
+        print ("To serial port:", text)
+        uart.write(text.encode())
+        uart.flush()
+        
+    if command == 'move':
+        value = str(abs(value)).zfill(2)
+        if value < 0:
+            send_serial(uart0, 'I'+value)
+        else:
+            send_serial(uart0, 'D'+value)
 
 def main():
     default_model_dir = '../all_models'
@@ -155,27 +183,26 @@ def main():
     # Average fps over last 30 frames.
     fps_counter = avg_fps_counter(30)
     last_detection_time = time.monotonic()
-    sec_to_init_panic_time = 10
 
 
     def user_callback(input_tensor, src_size, inference_box):
-      nonlocal fps_counter
-      nonlocal sec_to_init_panic_time
-      start_time = time.monotonic()
-      run_inference(interpreter, input_tensor)
-      # For larger input image sizes, use the edgetpu.classification.engine for better performance
-      objs = get_objects(interpreter, args.threshold)[:args.top_k]
-      end_time = time.monotonic()
-      text_lines = [
-          'Inference: {:.2f} ms'.format((end_time - start_time) * 1000),
-          'FPS: {} fps'.format(round(next(fps_counter))),
-      ]
-      
-      #print(' '.join(text_lines))
-      state = objects_analysis(inference_box, objs, labels)
-      print(state)
+        nonlocal fps_counter
+        start_time = time.monotonic()
+        run_inference(interpreter, input_tensor)
+        # For larger input image sizes, use the edgetpu.classification.engine for better performance
+        objs = get_objects(interpreter, args.threshold)[:args.top_k]
+        end_time = time.monotonic()
+        text_lines = [
+            'Inference: {:.2f} ms'.format((end_time - start_time) * 1000),
+            'FPS: {} fps'.format(round(next(fps_counter))),
+        ]
+        
+        #print(' '.join(text_lines))
+        state = objects_analysis(inference_box, objs, labels)
+        if abs(state['angle']) > MIN_DEGREE_TO_MOVE:
+            send_command("move", state['angle'])
 
-      return generate_svg(src_size, inference_box, objs, labels, text_lines)
+        return generate_svg(src_size, inference_box, objs, labels, text_lines)
 
     result = gstreamer.run_pipeline(user_callback,
                                     src_size=(640, 480),
