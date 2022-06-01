@@ -137,7 +137,7 @@ def objects_analysis(inference_box, objs, labels):
         'd': d, 'angle': angle
     }
 
-uart0 = Serial("/dev/ttyS0", 9600) #115200
+uart0 = Serial("/dev/ttyS1", 9600) #115200
 
 def send_command(command, value):
 
