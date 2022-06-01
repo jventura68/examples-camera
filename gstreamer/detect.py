@@ -133,7 +133,7 @@ def objects_analysis(inference_box, objs, labels):
         'time': time.monotonic(),
         'x': x, 'y': y, 'w': w, 'h': h,
         'object_detected': objects,
-        'd': d, 'angle': angle
+        'd': round(d,2), 'angle': round(angle)
     }
 
 uart1 = Serial("/dev/ttyS1", 9600) #115200
