@@ -136,11 +136,11 @@ def objects_analysis(inference_box, objs, labels):
         'd': d, 'angle': angle
     }
 
-uart0 = Serial("/dev/ttyS1", 9600) #115200
+uart1 = Serial("/dev/ttyS1", 9600) #115200
 
 def send_command(command, value):
 
-    global uart0 
+    global uart1 
 
     def send_serial(uart, text):
         print ("To serial port:", text)
@@ -148,11 +148,11 @@ def send_command(command, value):
         uart.flush()
         
     if command == 'move':
-        value = str(abs(value)).zfill(2)
+        v = str(abs(value)).zfill(2)
         if value < 0:
-            send_serial(uart0, 'I'+value)
+            send_serial(uart1, 'I'+v)
         else:
-            send_serial(uart0, 'D'+value)
+            send_serial(uart1, 'D'+v)
 
 def main():
     default_model_dir = '../all_models'
