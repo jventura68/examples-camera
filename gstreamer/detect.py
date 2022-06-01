@@ -171,16 +171,16 @@ def send_command(command, value):
 
         
     if command == 'move':
-        # pos_motor += value
-        # pos_motor = min(180, pos_motor)
-        # pos_motor = max(0, pos_motor)
-        # send_pwm (pos_motor)
+        pos_motor += value
+        pos_motor = min(180, pos_motor)
+        pos_motor = max(0, pos_motor)
+        send_pwm (pos_motor)
 
-        v = str(abs(value)).zfill(2)
-        if value < 0:
-            send_serial(uart1, 'I'+v)
-        else:
-            send_serial(uart1, 'D'+v)
+        # v = str(abs(value)).zfill(2)
+        # if value < 0:
+        #     send_serial(uart1, 'I'+v)
+        # else:
+        #     send_serial(uart1, 'D'+v)
     elif command == 'scan':
         if value < 0:
             send_serial(uart1, 'BI')
