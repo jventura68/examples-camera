@@ -246,12 +246,12 @@ def run_pipeline(user_function,
                 t. ! queue ! glfilterbin filter=glbox name=glbox ! queue ! {sink_caps} ! {sink_element}
                 t. ! queue ! glsvgoverlay name=gloverlay sync=false ! {output}
             """
-            #output = "glimagesink fullscreen=true qos=false sync=false"
+            output = "glimagesink fullscreen=true qos=false sync=false"
             #output = "matroskamux ! filesink location=gopro2.mkv"
-            output = """
-                videoconvert ! x264enc tune=zerolatency speed-preset=ultrafast ! h264parse ! 
-                mpegtsmux ! udpsink host={host} port={port} qos=false sync=false """\
-                     .format(host=HOST, port=PORT)
+            # output = """
+            #     videoconvert ! x264enc tune=zerolatency speed-preset=ultrafast ! h264parse ! 
+            #     mpegtsmux ! udpsink host={host} port={port} qos=false sync=false """\
+            #          .format(host=HOST, port=PORT)
             scale_caps = 'video/x-raw,format=BGRA,width={w},height={h}'.format(w=src_size[0], h=src_size[1])
         else:
             PIPELINE += """ ! decodebin ! glupload ! tee name=t
