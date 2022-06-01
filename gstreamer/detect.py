@@ -48,7 +48,7 @@ from pycoral.utils.dataset import read_label_file
 from pycoral.utils.edgetpu import make_interpreter
 from pycoral.utils.edgetpu import run_inference
 
-from periphery import Serial
+from periphery import Serial, PWM
 
 
 
@@ -138,21 +138,42 @@ def objects_analysis(inference_box, objs, labels):
 
 uart1 = Serial("/dev/ttyS1", 9600) #115200
 
+#Init pwm
+pwm0 = PWM(0, 0)
+pwm0.frequency = 50
+pwm0.duty_cycle = 0.075 #90 grados
+pwm0.enable()
+
+pos_motor = 90
+
 def send_command(command, value):
 
     global uart1 
+    global pos_motor
+    global pwm0
 
     def send_serial(uart, text):
         print ("To serial port:", text)
         text += "\n"
         uart.write(text.encode())
         uart.flush()
-
         # buf=uart.read(10, 1)
         # leido = buf.decode()
         # print("longitud", len(leido), "texto",leido)
+
+    def send_pwm(pos):
+        dc = .05 + 0.05 * pos / 180
+        print("Hacia PWM. Grados:",pos,"Duty cycle:",dc)
+        pwm0.duty_cycle = dc
+
+
         
     if command == 'move':
+        pos_motor += value
+        pos_motor = min(130, pos_motor)
+        pos_motor = max(50, pos_motor)
+        send_pwm (pos_motor)
+
         v = str(abs(value)).zfill(2)
         if value < 0:
             send_serial(uart1, 'I'+v)
@@ -163,6 +184,7 @@ def send_command(command, value):
             send_serial(uart1, 'BI')
         else:
             send_serial(uart1, 'BD')
+
 
 def main():
     default_model_dir = '../all_models'
