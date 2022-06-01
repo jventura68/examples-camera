@@ -171,7 +171,7 @@ def main():
       ]
       
       #print(' '.join(text_lines))
-      state = objects_analysis(src_size, inference_box, objs, labels)
+      state = objects_analysis(inference_box, objs, labels)
       print(state)
 
       return generate_svg(src_size, inference_box, objs, labels, text_lines)
