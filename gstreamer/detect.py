@@ -115,7 +115,8 @@ def objects_analysis(inference_box, objs, labels):
         # Subtract boxing offset.
         x, y = x - box_x, y - box_y
 
-        d = x - box_w/2
+        # Centro del balón - centro pantalla.
+        d = (x+w/2) - box_w/2
         angle = 2*d / box_w * 42
     
     return {
