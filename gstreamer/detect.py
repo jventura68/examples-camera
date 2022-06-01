@@ -212,9 +212,9 @@ def main():
             last_angle = state['angle']
             if abs(state['angle']) > MIN_DEGREE_TO_MOVE:
                 send_command("move", state['angle'])
-        else:
-            if (end_time - last_detection_time)*10e6 > SEC_PANIC_TIME:
-                send_command("scan", last_angle)
+        # else:
+        #     if (end_time - last_detection_time)*10e6 > SEC_PANIC_TIME:
+        #         send_command("scan", last_angle)
 
         return generate_svg(src_size, inference_box, objs, labels, text_lines)
 
