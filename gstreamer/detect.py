@@ -154,7 +154,7 @@ def send_command(command, value):
     global pwm0
 
     def send_serial(uart, text):
-        #print ("To serial port:", text)
+        print ("To serial port:", text)
         text += "\n"
         uart.write(text.encode())
         uart.flush()
