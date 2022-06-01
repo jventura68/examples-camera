@@ -193,6 +193,8 @@ def main():
 
     def user_callback(input_tensor, src_size, inference_box):
         nonlocal fps_counter
+        nonlocal last_detection_time
+        nonlocal last_angle
         start_time = time.monotonic()
         run_inference(interpreter, input_tensor)
         # For larger input image sizes, use the edgetpu.classification.engine for better performance
