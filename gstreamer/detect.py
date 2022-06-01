@@ -148,9 +148,9 @@ def send_command(command, value):
         uart.write(text.encode())
         uart.flush()
 
-        buf=uart.read(10, 1)
-        leido = buf.decode()
-        print("longitud", len(leido), "texto",leido)
+        # buf=uart.read(10, 1)
+        # leido = buf.decode()
+        # print("longitud", len(leido), "texto",leido)
         
     if command == 'move':
         v = str(abs(value)).zfill(2)
