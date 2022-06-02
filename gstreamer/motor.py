@@ -1,4 +1,3 @@
-import time
 from dataclasses import dataclass
 from periphery import PWM
 import multiprocessing as mp
@@ -21,6 +20,8 @@ class Motor(metaclass=SingletonMeta):
     sub_scan: object = None
     MIN_PWM = 0.03
     MAX_PWM = 0.1025
+    MIN_DEGREE = 0
+    MAX_DEGREE = 180
 
     def __post_init__(self):
         self._pwm0 = PWM(0, 0)
@@ -29,9 +30,6 @@ class Motor(metaclass=SingletonMeta):
         self.pos = 90
         
     @staticmethod
-    def _degree_to_pwm(degree):
-        return 0.03 + 0.0725 * degree / 180
-
     def _set_pwm(self, pwm):
         pwm = min(self.MAX_PWM, pwm)
         pwm = max(self.MIN_PWM, pwm)
@@ -48,6 +46,8 @@ class Motor(metaclass=SingletonMeta):
 
     @pos.setter
     def pos(self, degree):
+        degree = min(self.MAX_DEGREE, degree)
+        degree = max(self.MIN_DEGREE, degree)
         self._set_pwm(self._degree_to_pwm(degree))
         self._current_pos = degree
         print("Set to ", self.pos)
