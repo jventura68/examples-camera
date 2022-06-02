@@ -30,6 +30,9 @@ class Motor(metaclass=SingletonMeta):
         self.pos = 90
         
     @staticmethod
+    def _degree_to_pwm(degree):
+        return 0.03 + 0.0725 * degree / 180
+
     def _set_pwm(self, pwm):
         pwm = min(self.MAX_PWM, pwm)
         pwm = max(self.MIN_PWM, pwm)
