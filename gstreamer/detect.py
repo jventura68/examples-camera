@@ -194,7 +194,7 @@ def main():
             if abs(state['angle']) > MIN_DEGREE_TO_MOVE:
                 motor.rotate(state['angle'])
         else:
-            if (start_time - last_detection_time)*10e6 > SEC_PANIC_TIME:
+            if (start_time - last_detection_time) > SEC_PANIC_TIME:
                 motor.scan()
 
         return generate_svg(src_size, inference_box, objs, labels, text_lines)

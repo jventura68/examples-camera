@@ -100,7 +100,8 @@ class Motor(metaclass=SingletonMeta):
                       self.stop_event,
                       self._current_pwm,
                       self.MIN_PWM,
-                      self.MAX_PWM)
+                      self.MAX_PWM),
+                daemon=True
             )
             self.sub_scan.start()
 
