@@ -18,16 +18,18 @@ class Motor(metaclass=SingletonMeta):
     _scan: bool = False
     _pwm0: object = None
     sub_scan: object = None
-    MIN_PWM = 0.03
-    MAX_PWM = 0.1025
     MIN_DEGREE = 45
     MAX_DEGREE = 135
+
 
     def __post_init__(self):
         self._pwm0 = PWM(0, 0)
         self._pwm0.frequency = 50
         self._pwm0.enable()
         self.pos = 90
+        self.MIN_PWM = Motor._degrees_to_pwm(self.MIN_DEGREE)
+        self.MAX_PWM = Motor._degrees_to_pwm(self.MAX_DEGREE)
+
         
     @staticmethod
     def _degree_to_pwm(degree):

@@ -137,56 +137,6 @@ def objects_analysis(inference_box, objs, labels):
         'd': round(d,2), 'angle': round(angle)
     }
 
-uart1 = Serial("/dev/ttyS1", 115200) #115200
-
-#Init pwm
-pwm0 = PWM(0, 0)
-pwm0.frequency = 50
-pwm0.duty_cycle = 0.075 #90 grados
-pwm0.enable()
-
-pos_motor = 90
-print("---> Motor inicializado")
-
-def send_command(command, value):
-
-    global uart1 
-    global pos_motor
-    global pwm0
-
-    def send_serial(uart, text):
-        print ("To serial port:", text)
-        text += "\n"
-        uart.write(text.encode())
-        uart.flush()
-        # buf=uart.read(14, 0.5)
-        # leido = buf.decode()
-        # print("longitud", len(leido), "texto",leido)
-
-    def send_pwm(pos):
-        #dc = .05 + 0.05 * pos / 180
-        dc = 0.03 + 0.0725 * pos / 180
-        print("---> Hacia PWM. Grados:",pos,"Duty cycle:",round(dc,3),"-",round(dc*20,2))
-        pwm0.duty_cycle = dc
-
-
-        
-    if command == 'move':
-        pos_motor += value
-        pos_motor = min(180, pos_motor)
-        pos_motor = max(0, pos_motor)
-        send_pwm (pos_motor)
-
-        # v = str(abs(value)).zfill(2)
-        # if value < 0:
-        #     send_serial(uart1, 'I'+v)
-        # else:
-        #     send_serial(uart1, 'D'+v)
-    elif command == 'scan':
-        if value < 0:
-            send_serial(uart1, 'BI')
-        else:
-            send_serial(uart1, 'BD')
 
 def main():
     default_model_dir = '../all_models'
@@ -225,7 +175,7 @@ def main():
     def user_callback(input_tensor, src_size, inference_box):
         nonlocal fps_counter
         nonlocal last_detection_time
-        nonlocal last_angle
+        nonlocal motor
         start_time = time.monotonic()
         run_inference(interpreter, input_tensor)
         # For larger input image sizes, use the edgetpu.classification.engine for better performance
@@ -242,12 +192,10 @@ def main():
             last_detection_time = end_time
             last_angle = state['angle']
             if abs(state['angle']) > MIN_DEGREE_TO_MOVE:
-                #send_command("move", state['angle'])
                 motor.rotate(state['angle'])
-
-        # else:
-        #     if (end_time - last_detection_time)*10e6 > SEC_PANIC_TIME:
-        #         send_command("scan", last_angle)
+        else:
+            if (start_time - last_detection_time)*10e6 > SEC_PANIC_TIME:
+                motor.scan()
 
         return generate_svg(src_size, inference_box, objs, labels, text_lines)
 
