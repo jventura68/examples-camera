@@ -23,8 +23,8 @@ class Motor(metaclass=SingletonMeta):
 
 
     def __post_init__(self):
-        self.MIN_PWM = Motor._degrees_to_pwm(self.MIN_DEGREE)
-        self.MAX_PWM = Motor._degrees_to_pwm(self.MAX_DEGREE)
+        self.MIN_PWM = Motor._degree_to_pwm(self.MIN_DEGREE)
+        self.MAX_PWM = Motor._degree_to_pwm(self.MAX_DEGREE)
         self._pwm0 = PWM(0, 0)
         self._pwm0.frequency = 50
         self._pwm0.enable()
