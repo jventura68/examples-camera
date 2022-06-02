@@ -158,9 +158,9 @@ def send_command(command, value):
         text += "\n"
         uart.write(text.encode())
         uart.flush()
-        buf=uart.read(14, 0.5)
-        leido = buf.decode()
-        print("longitud", len(leido), "texto",leido)
+        # buf=uart.read(14, 0.5)
+        # leido = buf.decode()
+        # print("longitud", len(leido), "texto",leido)
 
     def send_pwm(pos):
         #dc = .05 + 0.05 * pos / 180
