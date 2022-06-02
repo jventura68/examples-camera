@@ -97,15 +97,18 @@ class Motor(metaclass=SingletonMeta):
             self.sub_scan.join()
 
 
-        
-
-
-m1 = Motor()
-m1.scan()
-m2 = Motor()
-time.sleep(6)
-m2.pos=75
-m2.scan()
-time.sleep(1)
-m2.stop_scan()
+if __name__ == "__main__":
+    motor = Motor()
+    command = input("Command: ")
+    while command != "exit":
+        if command == "scan":
+            motor.scan()
+        elif command == "stop":
+            motor.stop_scan()
+        elif command == "rotate":
+            value = int(input("Value: "))
+            motor.rotate(value)
+        elif command == "pos":
+            print("Current pos:", motor.pos)
+        command = input("Command: ")
     
