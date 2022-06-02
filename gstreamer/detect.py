@@ -41,6 +41,7 @@ CAMERA_ANGLE_VISION = 84
 MID_CAMERA_ANGLE_VISION = CAMERA_ANGLE_VISION / 2
 SEC_PANIC_TIME = 10
 
+from motor import Motor
 from common import avg_fps_counter, SVG
 from pycoral.adapters.common import input_size
 from pycoral.adapters.detect import get_objects
@@ -217,6 +218,8 @@ def main():
     fps_counter = avg_fps_counter(30)
     last_detection_time = time.monotonic()
     last_angle = 0
+    motor = Motor()
+
 
 
     def user_callback(input_tensor, src_size, inference_box):
@@ -239,7 +242,9 @@ def main():
             last_detection_time = end_time
             last_angle = state['angle']
             if abs(state['angle']) > MIN_DEGREE_TO_MOVE:
-                send_command("move", state['angle'])
+                #send_command("move", state['angle'])
+                motor.rotate(state['angle'])
+
         # else:
         #     if (end_time - last_detection_time)*10e6 > SEC_PANIC_TIME:
         #         send_command("scan", last_angle)
