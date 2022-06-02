@@ -33,6 +33,8 @@ class Motor(metaclass=SingletonMeta):
         return 0.03 + 0.0725 * degree / 180
 
     def _set_pwm(self, pwm):
+        pwm = min(self.MAX_PWM, pwm)
+        pwm = max(self.MIN_PWM, pwm)
         self._pwm0.duty_cycle = pwm
         if self.sub_scan:
             self.stop_scan()
@@ -70,11 +72,14 @@ class Motor(metaclass=SingletonMeta):
 
         while not stop_event.wait(WAIT_TIME):
             current_pwm += factor * step
-            print(".", end="", flush=True)
+            print(".", end="", flush=True)            print("Scan stopped", self.sub_scan)
+
             if current_pwm >= MAX_PWM:
+                current_pwm = MAX_PWM
                 factor = -1
                 print("pwm tope max")
             elif current_pwm <= MIN_PWM:
+                current_pwm = MIN_PWM
                 factor = 1
                 print("pwm tope min")
             pwm0.duty_cycle = current_pwm
