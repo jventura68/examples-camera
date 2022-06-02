@@ -98,7 +98,7 @@ class Motor(metaclass=SingletonMeta):
         if self.sub_scan:
             self.stop_event.set()
             self.sub_scan.join()
-            self.terminate()
+            print("Scan stopped", self.sub_scan)
 
 
 if __name__ == "__main__":
