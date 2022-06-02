@@ -76,6 +76,7 @@ class Motor(metaclass=SingletonMeta):
             elif current_pwm <= MIN_PWM:
                 factor = 1
                 print("pwm tope min")
+            pwm0.duty_cycle = current_pwm
 
 
     def scan(self):
