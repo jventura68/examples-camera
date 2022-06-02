@@ -72,7 +72,7 @@ class Motor(metaclass=SingletonMeta):
 
         while not stop_event.wait(WAIT_TIME):
             current_pwm += factor * step
-            print(".", end="", flush=True)            print("Scan stopped", self.sub_scan)
+            print(".", end="", flush=True)
 
             if current_pwm >= MAX_PWM:
                 current_pwm = MAX_PWM
