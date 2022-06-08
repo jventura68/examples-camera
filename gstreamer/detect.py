@@ -159,6 +159,9 @@ def main():
     parser.add_argument('--headless', action='store_true', help='No screen output')
     args = parser.parse_args()
 
+    if args.headless:
+        print("Running in headless mode")
+
     print('Loading {} with {} labels.'.format(args.model, args.labels))
     interpreter = make_interpreter(args.model)
     interpreter.allocate_tensors()
@@ -204,7 +207,8 @@ def main():
                                     src_size=(640, 480),
                                     appsink_size=inference_size,
                                     videosrc=args.videosrc,
-                                    videofmt=args.videofmt)
+                                    videofmt=args.videofmt
+                                    headless=args.headless)
 
 if __name__ == '__main__':
     main()
