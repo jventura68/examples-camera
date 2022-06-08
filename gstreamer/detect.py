@@ -113,7 +113,6 @@ def objects_analysis(inference_box, objs, labels):
     box_x, box_y, box_w, box_h = inference_box
     x, y, w, h = 0, 0, 0, 0
     d, angle = 0, 0
-    objects = False
 
     for obj in objs:
         objects = True
@@ -131,9 +130,9 @@ def objects_analysis(inference_box, objs, labels):
         d = (x+w/2) - box_w/2
         angle = 2*d / box_w * MID_CAMERA_ANGLE_VISION
 
-        state = {'x': x, 'y': y, 'w': w, 'h': h,
-                 'd': round(d,2), 'angle': round(angle)}
-        print("state",state)
+    state = {'x': x, 'y': y, 'w': w, 'h': h,
+                'd': round(d,2), 'angle': round(angle)}
+    print("state",state)
     
     return state
 
@@ -191,8 +190,8 @@ def main():
         ]
         
         #print(' '.join(text_lines))
-        state = objects_analysis(inference_box, objs, labels)
         if objs:
+            state = objects_analysis(inference_box, objs, labels)
             last_detection_time = end_time
             if abs(state['angle']) > MIN_DEGREE_TO_MOVE:
                 #motor.rotate(state['angle'])
