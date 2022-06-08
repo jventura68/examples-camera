@@ -121,13 +121,15 @@ def objects_analysis(inference_box, objs, labels):
             continue
         # Absolute coordinates, input tensor space.
         print("bbox object",bbox)
-        x, y = bbox.xmin, bbox.ymin
         w, h = bbox.width, bbox.height
+        x = round(bbox.xmin + w/2) 
+        y = round(bbox.ymin + h/2)
         # Subtract boxing offset.
-        x, y = x - box_x, y - box_y
+        # x, y = x - box_x, y - box_y
 
         # Centro del balón - centro pantalla.
         d = (x+w/2) - box_w/2
+        d = -d
         angle = 2*d / box_w * MID_CAMERA_ANGLE_VISION
 
     state = {'x': x, 'y': y, 'w': w, 'h': h,
