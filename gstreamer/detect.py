@@ -127,7 +127,7 @@ def objects_analysis(inference_box, objs, labels):
         x, y = x - box_x, y - box_y
 
         # Centro del balón - centro pantalla.
-        d = (x+w/2) - box_w/2
+        d = -(x+w/2) + box_w/2
         angle = 2*d / box_w * MID_CAMERA_ANGLE_VISION
     
     return {
