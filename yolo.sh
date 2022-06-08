@@ -1,1 +1,0 @@
-python3 detect.py --model /home/mendel/yolov3/edge-tpu-tiny-yolo/models/quant_coco-tiny-v3-relu_edgetpu.tflite --labels /balon/balon-labels.txt --top_k 1
