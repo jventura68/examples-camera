@@ -232,6 +232,7 @@ def run_pipeline(user_function,
     coral = get_dev_board_model()
     print("Coral board model: %s" % coral)
     if headless:
+        output=""
         scale = min(appsink_size[0] / src_size[0], appsink_size[1] / src_size[1])
         scale = tuple(int(x * scale) for x in src_size)
         scale_caps = 'video/x-raw,width={width},height={height}'.format(width=scale[0], height=scale[1])
