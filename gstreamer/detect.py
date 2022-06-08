@@ -156,6 +156,10 @@ def main():
     parser.add_argument('--videofmt', help='Input video format.',
                         default='raw',
                         choices=['raw', 'h264', 'jpeg'])
+    parser.add_argument('--videofmt', help='Input video format.',
+                        default='raw',
+                        choices=['raw', 'h264', 'jpeg'])
+    parser.add_argument('--headless', action='store_true', help='No screen output')
     args = parser.parse_args()
 
     print('Loading {} with {} labels.'.format(args.model, args.labels))
