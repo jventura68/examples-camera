@@ -18,9 +18,10 @@ class Motor(metaclass=SingletonMeta):
     _scan: bool = False
     _pwm0: object = None
     sub_scan: object = None
-    __MIN_DEGREE:int = 45
-    __MAX_DEGREE:int = 135
+    __MIN_DEGREE:int = 50
+    __MAX_DEGREE:int = 130
     degree_to_move:int = 5
+    inverted = True
 
 
     def __post_init__(self):
@@ -59,6 +60,8 @@ class Motor(metaclass=SingletonMeta):
         print ("Set to ", self.pos)
 
     def rotate(self, value):
+        if self.inverted:
+            value = -value
         if abs(value) > self.degree_to_move:
             self.pos = self._current_pos + value
 

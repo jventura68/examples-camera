@@ -128,7 +128,6 @@ def objects_analysis(inference_box, objs, labels):
 
         # Centro del balón - centro pantalla.
         d = (x+w/2) - box_w/2
-        d = -d
         angle = 2*d / box_w * MID_CAMERA_ANGLE_VISION
 
     state = {'x': x, 'y': y, 'w': w, 'h': h,
@@ -171,7 +170,7 @@ def main():
     fps_counter = avg_fps_counter(30)
     last_detection_time = time.monotonic()
     last_angle = 0
-    motor = Motor(degree_to_move=5)
+    motor = Motor(inverted=True, degree_to_move=5)
 
 
 
