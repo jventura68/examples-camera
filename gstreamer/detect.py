@@ -207,7 +207,7 @@ def main():
                                     src_size=(640, 480),
                                     appsink_size=inference_size,
                                     videosrc=args.videosrc,
-                                    videofmt=args.videofmt
+                                    videofmt=args.videofmt,
                                     headless=args.headless)
 
 if __name__ == '__main__':
