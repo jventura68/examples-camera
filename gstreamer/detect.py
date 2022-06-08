@@ -129,13 +129,11 @@ def objects_analysis(inference_box, objs, labels):
         # Centro del balón - centro pantalla.
         d = (x+w/2) - box_w/2
         angle = 2*d / box_w * MID_CAMERA_ANGLE_VISION
+
+        state = {'x': x, 'y': y, 'w': w, 'h': h,
+                 'd': round(d,2), 'angle': round(angle)}
     
-    return {
-        'time': time.monotonic(),
-        'x': x, 'y': y, 'w': w, 'h': h,
-        'object_detected': objects,
-        'd': round(d,2), 'angle': round(angle)
-    }
+    return 
 
 
 def main():
@@ -195,14 +193,15 @@ def main():
         if objs:
             last_detection_time = end_time
             if abs(state['angle']) > MIN_DEGREE_TO_MOVE:
-                motor.rotate(state['angle'])
-            print(state)
+                #motor.rotate(state['angle'])
+                pass
         else:
             if (start_time - last_detection_time) > SEC_PANIC_TIME:
-                motor.scan()
+                #motor.scan()
+                pass
 
         return generate_svg(src_size, inference_box, objs, labels, text_lines)
-
+    print ("inference_size", inference_size)
     result = gstreamer.run_pipeline(user_callback,
                                     src_size=(640, 480),
                                     appsink_size=inference_size,
