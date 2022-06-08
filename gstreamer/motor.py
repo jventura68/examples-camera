@@ -21,7 +21,7 @@ class Motor(metaclass=SingletonMeta):
     __MIN_DEGREE:int = 50
     __MAX_DEGREE:int = 130
     degree_to_move:int = 5
-    inverted = True
+    inverted:bool = True
 
 
     def __post_init__(self):
