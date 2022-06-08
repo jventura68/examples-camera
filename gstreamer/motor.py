@@ -18,13 +18,14 @@ class Motor(metaclass=SingletonMeta):
     _scan: bool = False
     _pwm0: object = None
     sub_scan: object = None
-    MIN_DEGREE = 45
-    MAX_DEGREE = 135
+    __MIN_DEGREE:int = 45
+    __MAX_DEGREE:int = 135
+    degree_to_move:int = 5
 
 
     def __post_init__(self):
-        self.MIN_PWM = Motor._degree_to_pwm(self.MIN_DEGREE)
-        self.MAX_PWM = Motor._degree_to_pwm(self.MAX_DEGREE)
+        self.__MIN_PWM = Motor._degree_to_pwm(self.__MIN_DEGREE)
+        self.__MAX_PWM = Motor._degree_to_pwm(self.__MAX_DEGREE)
         self._pwm0 = PWM(0, 0)
         self._pwm0.frequency = 50
         self._pwm0.enable()
@@ -55,11 +56,11 @@ class Motor(metaclass=SingletonMeta):
         degree = max(self.MIN_DEGREE, degree)
         self._set_pwm(self._degree_to_pwm(degree))
         self._current_pos = degree
-        print("Set to ", self.pos)
+        print ("Set to ", self.pos)
 
     def rotate(self, value):
-        print ("Rotate", value, end=" -> ")
-        self.pos = self._current_pos + value
+        if abs(value) > self.degree_to_move:
+            self.pos = self._current_pos + value
 
     @staticmethod
     def _scan(pwm0,
@@ -113,7 +114,7 @@ class Motor(metaclass=SingletonMeta):
             self.sub_scan = None
 
 if __name__ == "__main__":
-    motor = Motor()
+    motor = Motor(degree_to_move=5)
     command = input("Command: ")
     while command != "exit":
         if command == "scan":

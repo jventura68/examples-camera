@@ -36,7 +36,6 @@ import os
 import time
 import math
 
-MIN_DEGREE_TO_MOVE = 5
 CAMERA_ANGLE_VISION = 84
 MID_CAMERA_ANGLE_VISION = CAMERA_ANGLE_VISION / 2
 SEC_PANIC_TIME = 10
@@ -134,7 +133,6 @@ def objects_analysis(inference_box, objs, labels):
 
     state = {'x': x, 'y': y, 'w': w, 'h': h,
                 'd': round(d,2), 'angle': round(angle)}
-    print("state",state)
     
     return state
 
@@ -173,7 +171,7 @@ def main():
     fps_counter = avg_fps_counter(30)
     last_detection_time = time.monotonic()
     last_angle = 0
-    motor = Motor()
+    motor = Motor(degree_to_move=5)
 
 
 
@@ -191,12 +189,14 @@ def main():
             'FPS: {} fps'.format(round(next(fps_counter))),
         ]
         
-        #print(' '.join(text_lines))
+        print(' '.join(text_lines))
         if objs:
             state = objects_analysis(inference_box, objs, labels)
             last_detection_time = end_time
-            if abs(state['angle']) > MIN_DEGREE_TO_MOVE:
-                motor.rotate(state['angle'])
+            last_pos = motor.pos
+            motor.rotate(state['angle'])
+            if last_pos != motor.pos:
+                print("state",state)
         else:
             if (start_time - last_detection_time) > SEC_PANIC_TIME:
                 motor.scan()
