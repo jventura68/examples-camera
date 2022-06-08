@@ -121,6 +121,7 @@ def objects_analysis(inference_box, objs, labels):
         if not bbox.valid:
             continue
         # Absolute coordinates, input tensor space.
+        print("bbox object",bbox)
         x, y = bbox.xmin, bbox.ymin
         w, h = bbox.width, bbox.height
         # Subtract boxing offset.
@@ -132,8 +133,9 @@ def objects_analysis(inference_box, objs, labels):
 
         state = {'x': x, 'y': y, 'w': w, 'h': h,
                  'd': round(d,2), 'angle': round(angle)}
+        print("state",state)
     
-    return 
+    return state
 
 
 def main():
