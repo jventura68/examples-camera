@@ -120,7 +120,7 @@ def objects_analysis(inference_box, objs, labels):
         if not bbox.valid:
             continue
         # Absolute coordinates, input tensor space.
-        print("bbox object",bbox)
+        #print("bbox object",bbox)
         w, h = bbox.width, bbox.height
         x = round(bbox.xmin + w/2) 
         y = round(bbox.ymin + h/2)
@@ -196,12 +196,10 @@ def main():
             state = objects_analysis(inference_box, objs, labels)
             last_detection_time = end_time
             if abs(state['angle']) > MIN_DEGREE_TO_MOVE:
-                #motor.rotate(state['angle'])
-                pass
+                motor.rotate(state['angle'])
         else:
             if (start_time - last_detection_time) > SEC_PANIC_TIME:
-                #motor.scan()
-                pass
+                motor.scan()
 
         return generate_svg(src_size, inference_box, objs, labels, text_lines)
     print ("inference_size", inference_size)
