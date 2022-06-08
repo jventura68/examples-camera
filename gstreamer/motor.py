@@ -37,8 +37,8 @@ class Motor(metaclass=SingletonMeta):
         return 0.03 + 0.0725 * degree / 180
 
     def _set_pwm(self, pwm):
-        pwm = min(self.MAX_PWM, pwm)
-        pwm = max(self.MIN_PWM, pwm)
+        pwm = min(self.__MAX_PWM, pwm)
+        pwm = max(self.__MIN_PWM, pwm)
         self._pwm0.duty_cycle = pwm
         if self.sub_scan:
             self.stop_scan()
@@ -52,8 +52,8 @@ class Motor(metaclass=SingletonMeta):
 
     @pos.setter
     def pos(self, degree):
-        degree = min(self.MAX_DEGREE, degree)
-        degree = max(self.MIN_DEGREE, degree)
+        degree = min(self.__MAX_DEGREE, degree)
+        degree = max(self.__MIN_DEGREE, degree)
         self._set_pwm(self._degree_to_pwm(degree))
         self._current_pos = degree
         print ("Set to ", self.pos)
@@ -100,8 +100,8 @@ class Motor(metaclass=SingletonMeta):
                 args=(self._pwm0,
                       self.stop_event,
                       self._current_pwm,
-                      self.MIN_PWM,
-                      self.MAX_PWM),
+                      self.__MIN_PWM,
+                      self.__MAX_PWM),
                 daemon=True
             )
             self.sub_scan.start()
