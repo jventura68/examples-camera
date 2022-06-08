@@ -42,7 +42,7 @@ class Motor(metaclass=SingletonMeta):
         if self.sub_scan:
             self.stop_scan()
         self._current_pwm = pwm
-        print("PWM = ", pwm)
+        #print("PWM = ", pwm)
 
 
     @property
@@ -58,7 +58,7 @@ class Motor(metaclass=SingletonMeta):
         print("Set to ", self.pos)
 
     def rotate(self, value):
-        print ("Rotate", value)
+        print ("Rotate", value, end=" -> ")
         self.pos = self._current_pos + value
 
     @staticmethod
@@ -67,7 +67,7 @@ class Motor(metaclass=SingletonMeta):
               current_pwm,
               MIN_PWM,
               MAX_PWM):
-        print("pwm0", pwm0)
+        #print("pwm0", pwm0)
         print("Escaneando", end="", flush=True)
         factor = 1
         TIME_SCAN = 3
@@ -93,7 +93,7 @@ class Motor(metaclass=SingletonMeta):
     def scan(self):
         if not self.sub_scan:
             self.stop_event = mp.Event()
-            print("Main pwm0", self._pwm0)
+            #print("Main pwm0", self._pwm0)
             self.sub_scan = mp.Process(
                 target=Motor._scan, 
                 args=(self._pwm0,

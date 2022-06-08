@@ -82,7 +82,7 @@ def generate_svg(src_size, inference_box, objs, labels, text_lines):
         x, y, w, h = x * scale_x, y * scale_y, w * scale_x, h * scale_y
         left_mov = x < out_left
         right_mov = x+w > out_right
-        print (f"x={x}, y={y}, w={w}, h={h}, out_left={out_left}, out_right={out_right}, box_w={box_w}, left_mov={left_mov}, right_mov={right_mov}")
+        #print (f"x={x}, y={y}, w={w}, h={h}, out_left={out_left}, out_right={out_right}, box_w={box_w}, left_mov={left_mov}, right_mov={right_mov}")
         percent = int(100 * obj.score)
         label = '{}% {}'.format(percent, labels.get(obj.id, obj.id))
         svg.add_text(x, y - 5, label, 20)
@@ -127,7 +127,7 @@ def objects_analysis(inference_box, objs, labels):
         x, y = x - box_x, y - box_y
 
         # Centro del balón - centro pantalla.
-        d = -(x+w/2) + box_w/2
+        d = (x+w/2) - box_w/2
         angle = 2*d / box_w * MID_CAMERA_ANGLE_VISION
     
     return {
@@ -194,9 +194,9 @@ def main():
         state = objects_analysis(inference_box, objs, labels)
         if objs:
             last_detection_time = end_time
-            last_angle = state['angle']
             if abs(state['angle']) > MIN_DEGREE_TO_MOVE:
                 motor.rotate(state['angle'])
+            print(state)
         else:
             if (start_time - last_detection_time) > SEC_PANIC_TIME:
                 motor.scan()
