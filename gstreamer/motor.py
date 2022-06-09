@@ -104,7 +104,7 @@ class Motor(metaclass=SingletonMeta):
             else:
                 self._set_pwm(self._degree_to_pwm(degree))
             self.__current_pos = degree
-            print ("Set to ", self.pos)
+            print ("Motor pos: {}º".format(self.pos))
 
     def rotate(self, value):
         self.pos = self.__current_pos + value

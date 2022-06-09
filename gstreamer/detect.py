@@ -48,8 +48,6 @@ from pycoral.utils.dataset import read_label_file
 from pycoral.utils.edgetpu import make_interpreter
 from pycoral.utils.edgetpu import run_inference
 
-from periphery import Serial, PWM
-
 
 
 def generate_svg(src_size, inference_box, objs, labels, text_lines):
@@ -189,19 +187,22 @@ def main():
             'FPS: {} fps'.format(round(next(fps_counter))),
         ]
         
-        print(' '.join(text_lines))
+        #print(' '.join(text_lines))
         if objs:
             state = objects_analysis(inference_box, objs, labels)
             last_detection_time = end_time
             last_pos = motor.pos
             motor.rotate(state['angle'])
             if last_pos != motor.pos:
-                print("state",state)
+                print("FPS", fps_counter, "state",state)
         else:
             if (start_time - last_detection_time) > SEC_PANIC_TIME:
+                print(' '.join(text_lines))
                 motor.scan()
 
-        return generate_svg(src_size, inference_box, objs, labels, text_lines)
+        #return generate_svg(src_size, inference_box, objs, labels, text_lines)
+        return None
+        
     print ("inference_size", inference_size)
     result = gstreamer.run_pipeline(user_callback,
                                     src_size=(640, 480),
