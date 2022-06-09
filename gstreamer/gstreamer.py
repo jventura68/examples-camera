@@ -24,13 +24,14 @@ from gi.repository import GLib, GObject, Gst, GstBase, Gtk
 Gst.init(None)
 
 class GstPipeline:
-    def __init__(self, pipeline, user_function, src_size):
+    def __init__(self, pipeline, user_function, src_size, headless=False):
         self.user_function = user_function
         self.running = False
         self.gstsample = None
         self.sink_size = None
         self.src_size = src_size
         self.box = None
+        self.headless = headless
         self.condition = threading.Condition()
 
         self.pipeline = Gst.parse_launch(pipeline)
@@ -40,16 +41,13 @@ class GstPipeline:
 
         appsink = self.pipeline.get_by_name('appsink')
         appsink.connect('new-preroll', self.on_new_sample, True)
-        appsink.connect('new-sample', self.on_new_sample, False)
-
-        # Set up a pipeline bus watch to catch errors.
-        bus = self.pipeline.get_bus()
+        appsink.connect('new-sample', self.oGstPipeline
         bus.add_signal_watch()
         bus.connect('message', self.on_bus_message)
 
         # Set up a full screen window on Coral, no-op otherwise.
-        # headless
-        #self.setup_window()
+        if not headless:
+            self.setup_window()
 
     def run(self):
         # Start inference worker.
@@ -125,7 +123,7 @@ class GstPipeline:
 
             # Passing Gst.Buffer as input tensor avoids 2 copies of it.
             gstbuffer = gstsample.get_buffer()
-            svg = self.user_function(gstbuffer, self.src_size, self.get_box())
+            svg = self.user_function(gstbuffer, self.src_size, self.get_box(),self.headless)
             if svg:
                 if self.overlay:
                     self.overlay.set_property('data', svg)
@@ -289,5 +287,5 @@ def run_pipeline(user_function,
 
     print('Gstreamer pipeline:\n', pipeline)
 
-    pipeline = GstPipeline(pipeline, user_function, src_size)
+    pipeline = GstPipeline(pipeline, user_function, src_size, headless)
     pipeline.run()

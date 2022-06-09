@@ -47,8 +47,6 @@ from pycoral.utils.dataset import read_label_file
 from pycoral.utils.edgetpu import make_interpreter
 from pycoral.utils.edgetpu import run_inference
 
-from screen import Screen
-
 
 def generate_svg(src_size, inference_box, objs, labels, text_lines):
     svg = SVG(src_size)
@@ -116,7 +114,7 @@ def objects_analysis(inference_box, objs, labels):
         bbox = obj.bbox
         if not bbox.valid:
             continue
-        # Absolute coordinates, input tensor space.
+        # Abheadlesssolute coordinates, input tensor space.
         #print("bbox object",bbox)
         w, h = bbox.width, bbox.height
         x = round(bbox.xmin + w/2) 
@@ -174,7 +172,7 @@ def main():
 
 
 
-    def user_callback(input_tensor, src_size, inference_box):
+    def user_callback(input_tensor, src_size, inference_box, headless=False):
         nonlocal fps_counter
         nonlocal last_detection_time
         nonlocal motor
@@ -201,10 +199,12 @@ def main():
             if (start_time - last_detection_time) > SEC_PANIC_TIME:
                 if not motor.scanning:
                     print(' '.join(text_lines))
-                    #motor.scan()
+                    motor.scan()
 
-        #return generate_svg(src_size, inference_box, objs, labels, text_lines)
-        return None
+        if headless:
+            return None
+        else:
+            return generate_svg(src_size, inference_box, objs, labels, text_lines)
         
     print("inference_size", inference_size)
     result = gstreamer.run_pipeline(user_callback,
