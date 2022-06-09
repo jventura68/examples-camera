@@ -64,6 +64,8 @@ class Motor(metaclass=SingletonMeta):
         self.__sub_scan: mp.Process = None
         self.pos = 90
 
+    def close(self):
+        self.__pwm0.close()
         
     @staticmethod
     def _degree_to_pwm(degree):
@@ -105,8 +107,11 @@ class Motor(metaclass=SingletonMeta):
                 self._set_pwm(self._degree_to_pwm(180-degree))
             else:
                 self._set_pwm(self._degree_to_pwm(degree))
+            print ("Motor pos: {}º anterior{}º rotate {}"\
+                   .format(degree, 
+                           self.__current_pos,
+                           degree - self.__current_pos))
             self.__current_pos = degree
-            print ("Motor pos: {}º".format(self.pos))
 
     def rotate(self, value):
         self.pos = self.__current_pos + value
