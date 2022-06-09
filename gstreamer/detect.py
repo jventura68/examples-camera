@@ -182,9 +182,10 @@ def main():
         # For larger input image sizes, use the edgetpu.classification.engine for better performance
         objs = get_objects(interpreter, args.threshold)[:args.top_k]
         end_time = time.monotonic()
+        fps = round(next(fps_counter))
         text_lines = [
             'Inference: {:.2f} ms'.format((end_time - start_time) * 1000),
-            'FPS: {} fps'.format(round(next(fps_counter))),
+            'FPS: {} fps'.format(fps),
         ]
         
         #print(' '.join(text_lines))
@@ -194,11 +195,12 @@ def main():
             last_pos = motor.pos
             motor.rotate(state['angle'])
             if last_pos != motor.pos:
-                print("FPS", fps_counter, "state",state)
+                print("FPS", fps, "state",state)
         else:
             if (start_time - last_detection_time) > SEC_PANIC_TIME:
-                print(' '.join(text_lines))
-                motor.scan()
+                if not motor.scanning:
+                    print(' '.join(text_lines))
+                    motor.scan()
 
         #return generate_svg(src_size, inference_box, objs, labels, text_lines)
         return None

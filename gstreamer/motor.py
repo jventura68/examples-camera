@@ -87,6 +87,10 @@ class Motor(metaclass=SingletonMeta):
         return self.__range
 
     @property
+    def scanning(self):
+        return self.__sub_scan is not None
+
+    @property
     def PWM(self):
         return self.__current_pwm
 
