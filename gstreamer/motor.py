@@ -33,8 +33,6 @@ class Motor(metaclass=SingletonMeta):
         self.__current_pos: int = 90
         self.__current_pwm: float = 0.0
         self.__scan: bool = False
-        self.__pwm0: object = None
-        self.__sub_scan: object = None
         self.pos = 90
 
         
