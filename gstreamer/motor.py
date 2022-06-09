@@ -1,5 +1,4 @@
 import argparse
-import rich
 
 from dataclasses import dataclass
 from periphery import PWM

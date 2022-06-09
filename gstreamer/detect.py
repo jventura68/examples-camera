@@ -34,7 +34,6 @@ import argparse
 import gstreamer
 import os
 import time
-import math
 
 CAMERA_ANGLE_VISION = 84
 MID_CAMERA_ANGLE_VISION = CAMERA_ANGLE_VISION / 2
@@ -48,6 +47,7 @@ from pycoral.utils.dataset import read_label_file
 from pycoral.utils.edgetpu import make_interpreter
 from pycoral.utils.edgetpu import run_inference
 
+from screen import Screen
 
 
 def generate_svg(src_size, inference_box, objs, labels, text_lines):
@@ -170,6 +170,7 @@ def main():
     last_detection_time = time.monotonic()
     last_angle = 0
     motor = Motor(inverted=True, degree_to_move=5)
+    _ = input("Pulse <intro> para iniciar el proceso")
 
 
 
@@ -200,7 +201,7 @@ def main():
             if (start_time - last_detection_time) > SEC_PANIC_TIME:
                 if not motor.scanning:
                     print(' '.join(text_lines))
-                    motor.scan()
+                    #motor.scan()
 
         #return generate_svg(src_size, inference_box, objs, labels, text_lines)
         return None
