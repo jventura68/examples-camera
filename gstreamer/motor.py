@@ -6,6 +6,37 @@ from periphery import PWM
 import multiprocessing as mp
 
 
+# @dataclass
+# class PWM:
+#     canal: int
+#     pin: int
+
+
+#     def enable(self):
+#         print("PWM enabled")
+
+#     def __post_init__(self):
+#         print("PWM created")
+#         self._frequency = 50
+#         self._duty_cycle = 0
+
+#     @property
+#     def frequency(self):
+#         return self._frequency
+
+#     @frequency.setter
+#     def frequency(self, value):
+#         self._frequency = value
+
+#     @property
+#     def duty_cycle(self):
+#         return self._duty_cycle
+
+#     @duty_cycle.setter
+#     def duty_cycle(self, value):
+#         self._duty_cycle = value
+#         print("PWM duty cycle set to {}".format(value))
+
 class SingletonMeta(type):
     _instances = {}
 
@@ -68,13 +99,14 @@ class Motor(metaclass=SingletonMeta):
     def pos(self, degree):
         degree = min(self.max_degree, degree)
         degree = max(self.min_degree, degree)
-        self._set_pwm(self._degree_to_pwm(degree))
+        if self.inverted:
+            self._set_pwm(self._degree_to_pwm(180-degree))
+        else:
+            self._set_pwm(self._degree_to_pwm(degree))
         self.__current_pos = degree
         print ("Set to ", self.pos)
 
     def rotate(self, value):
-        if self.inverted:
-            value = -value
         if abs(value) > self.degree_to_move:
             self.pos = self.__current_pos + value
 
@@ -133,11 +165,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Motor")
     parser.add_argument("--inverted", action="store_true", default=False)  
     parser.add_argument("--degree_to_move", type=int, default=5)
-    parser.add_argument("--min_degree", type=int, default=50)
-    parser.add_argument("--max_degree", type=int, default=130)
+    parser.add_argument("--min_degree", type=int, default=40)
+    parser.add_argument("--max_degree", type=int, default=140)
     args = parser.parse_args()
 
-    motor = Motor(inverted=args.inverted, degree_to_move=args.degree_to_move)
+    motor = Motor(inverted=args.inverted, 
+                  degree_to_move=args.degree_to_move,
+                  min_degree=args.min_degree,
+                  max_degree=args.max_degree)
     
     def get_angle(d, screen = (320,320)):
         return int(d * motor.range / screen[0])+ motor.min_degree
@@ -157,7 +192,7 @@ if __name__ == "__main__":
         elif command.startswith("obj"):
             value = int(command.split()[1])
             angle = get_angle(d=value)
-            motor.pos = get_angle(angle)
+            motor.pos = angle
             print("distance: ", value, "angle: ", angle, "PWM: ", motor.PWM)
         else:
             print("Commands: scan, stop, rot <value>, pos <value>, obj <value>")
