@@ -57,6 +57,10 @@ class Motor(metaclass=SingletonMeta):
         return self.__range
 
     @property
+    def PWM(self):
+        return self.__current_pwm
+
+    @property
     def pos(self):
         return self.__current_pos
 
@@ -69,8 +73,8 @@ class Motor(metaclass=SingletonMeta):
         print ("Set to ", self.pos)
 
     def rotate(self, value):
-        # if self.inverted:
-        #     value = -value
+        if self.inverted:
+            value = -value
         if abs(value) > self.degree_to_move:
             self.pos = self.__current_pos + value
 
@@ -129,6 +133,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Motor")
     parser.add_argument("--inverted", action="store_true", default=False)  
     parser.add_argument("--degree_to_move", type=int, default=5)
+    parser.add_argument("--min_degree", type=int, default=50)
+    parser.add_argument("--max_degree", type=int, default=130)
     args = parser.parse_args()
 
     motor = Motor(inverted=args.inverted, degree_to_move=args.degree_to_move)
@@ -150,7 +156,9 @@ if __name__ == "__main__":
             motor.rotate(value-motor.pos)
         elif command.startswith("obj"):
             value = int(command.split()[1])
-            motor.pos = get_angle(d=value)
+            angle = get_angle(d=value)
+            motor.pos = get_angle(angle)
+            print("distance: ", value, "angle: ", angle, "PWM: ", motor.PWM)
         else:
             print("Commands: scan, stop, rot <value>, pos <value>, obj <value>")
         command = input("Command: ")
