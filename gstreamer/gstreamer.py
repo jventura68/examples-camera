@@ -41,7 +41,10 @@ class GstPipeline:
 
         appsink = self.pipeline.get_by_name('appsink')
         appsink.connect('new-preroll', self.on_new_sample, True)
-        appsink.connect('new-sample', self.oGstPipeline
+        appsink.connect('new-sample', self.on_new_sample, False)
+
+        # Set up a pipeline bus watch to catch errors.
+        bus = self.pipeline.get_bus()
         bus.add_signal_watch()
         bus.connect('message', self.on_bus_message)
 
