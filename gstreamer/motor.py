@@ -2,40 +2,40 @@ import argparse
 import rich
 
 from dataclasses import dataclass
-from periphery import PWM
+#from periphery import PWM
 import multiprocessing as mp
 
 
-# @dataclass
-# class PWM:
-#     canal: int
-#     pin: int
+@dataclass
+class PWM:
+    canal: int
+    pin: int
 
 
-#     def enable(self):
-#         print("PWM enabled")
+    def enable(self):
+        print("PWM enabled")
 
-#     def __post_init__(self):
-#         print("PWM created")
-#         self._frequency = 50
-#         self._duty_cycle = 0
+    def __post_init__(self):
+        print("PWM created")
+        self._frequency = 50
+        self._duty_cycle = 0
 
-#     @property
-#     def frequency(self):
-#         return self._frequency
+    @property
+    def frequency(self):
+        return self._frequency
 
-#     @frequency.setter
-#     def frequency(self, value):
-#         self._frequency = value
+    @frequency.setter
+    def frequency(self, value):
+        self._frequency = value
 
-#     @property
-#     def duty_cycle(self):
-#         return self._duty_cycle
+    @property
+    def duty_cycle(self):
+        return self._duty_cycle
 
-#     @duty_cycle.setter
-#     def duty_cycle(self, value):
-#         self._duty_cycle = value
-#         print("PWM duty cycle set to {}".format(value))
+    @duty_cycle.setter
+    def duty_cycle(self, value):
+        self._duty_cycle = value
+        print("PWM duty cycle set to {}".format(value))
 
 class SingletonMeta(type):
     _instances = {}
@@ -97,18 +97,18 @@ class Motor(metaclass=SingletonMeta):
 
     @pos.setter
     def pos(self, degree):
-        degree = min(self.max_degree, degree)
-        degree = max(self.min_degree, degree)
-        if self.inverted:
-            self._set_pwm(self._degree_to_pwm(180-degree))
-        else:
-            self._set_pwm(self._degree_to_pwm(degree))
-        self.__current_pos = degree
-        print ("Set to ", self.pos)
+        if abs(self.__current_pos - degree) > self.degree_to_move:
+            degree = min(self.max_degree, degree)
+            degree = max(self.min_degree, degree)
+            if self.inverted:
+                self._set_pwm(self._degree_to_pwm(180-degree))
+            else:
+                self._set_pwm(self._degree_to_pwm(degree))
+            self.__current_pos = degree
+            print ("Set to ", self.pos)
 
     def rotate(self, value):
-        if abs(value) > self.degree_to_move:
-            self.pos = self.__current_pos + value
+        self.pos = self.__current_pos + value
 
     @staticmethod
     def __scan(pwm0,
@@ -175,7 +175,7 @@ if __name__ == "__main__":
                   max_degree=args.max_degree)
     
     def get_angle(d, screen = (320,320)):
-        return int(d * motor.range / screen[0])+ motor.min_degree
+        return int(d * 180 / screen[0])
 
     command = input("Command: ")
     while command != "exit":

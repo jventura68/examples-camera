@@ -126,9 +126,10 @@ def objects_analysis(inference_box, objs, labels):
         # Subtract boxing offset.
         # x, y = x - box_x, y - box_y
 
-        # Centro del balón - centro pantalla.
-        d = (x+w/2) - box_w/2
-        angle = 2*d / box_w * MID_CAMERA_ANGLE_VISION
+        # Centro del balón - inicio pantalla
+        d = (x+w/2)
+        #angle = 2*d / box_w * MID_CAMERA_ANGLE_VISION
+        angle = round(d * CAMERA_ANGLE_VISION / w)
 
     state = {'x': x, 'y': y, 'w': w, 'h': h,
                 'd': round(d,2), 'angle': round(angle)}
@@ -193,7 +194,7 @@ def main():
             state = objects_analysis(inference_box, objs, labels)
             last_detection_time = end_time
             last_pos = motor.pos
-            motor.rotate(state['angle'])
+            motor.pos=state['angle']
             if last_pos != motor.pos:
                 print("state",state)
         else:
