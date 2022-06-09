@@ -59,6 +59,7 @@ class Motor(metaclass=SingletonMeta):
         self.__pwm0 = PWM(0, 0)
         self.__pwm0.frequency = 50
         self.__pwm0.enable()
+        self.__current_pos = 0
         self.__range= self.max_degree - self.min_degree
         self.__sub_scan: mp.Process = None
         self.pos = 90
