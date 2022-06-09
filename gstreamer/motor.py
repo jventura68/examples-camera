@@ -2,40 +2,39 @@ import argparse
 import rich
 
 from dataclasses import dataclass
-#from periphery import PWM
+from periphery import PWM
 import multiprocessing as mp
 
+# @dataclass
+# class PWM:
+#     canal: int
+#     pin: int
 
-@dataclass
-class PWM:
-    canal: int
-    pin: int
 
+#     def enable(self):
+#         print("PWM enabled")
 
-    def enable(self):
-        print("PWM enabled")
+#     def __post_init__(self):
+#         print("PWM created")
+#         self._frequency = 50
+#         self._duty_cycle = 0
 
-    def __post_init__(self):
-        print("PWM created")
-        self._frequency = 50
-        self._duty_cycle = 0
+#     @property
+#     def frequency(self):
+#         return self._frequency
 
-    @property
-    def frequency(self):
-        return self._frequency
+#     @frequency.setter
+#     def frequency(self, value):
+#         self._frequency = value
 
-    @frequency.setter
-    def frequency(self, value):
-        self._frequency = value
+#     @property
+#     def duty_cycle(self):
+#         return self._duty_cycle
 
-    @property
-    def duty_cycle(self):
-        return self._duty_cycle
-
-    @duty_cycle.setter
-    def duty_cycle(self, value):
-        self._duty_cycle = value
-        print("PWM duty cycle set to {}".format(value))
+#     @duty_cycle.setter
+#     def duty_cycle(self, value):
+#         self._duty_cycle = value
+#         print("PWM duty cycle set to {}".format(value))
 
 class SingletonMeta(type):
     _instances = {}
