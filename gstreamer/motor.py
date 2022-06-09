@@ -134,7 +134,7 @@ if __name__ == "__main__":
     motor = Motor(inverted=args.inverted, degree_to_move=args.degree_to_move)
     
     def get_angle(d, screen = (320,320)):
-        return int(d * motor.range / screen[0])
+        return int(d * motor.range / screen[0])+ motor.min_degree
 
     command = input("Command: ")
     while command != "exit":
@@ -151,6 +151,7 @@ if __name__ == "__main__":
         elif command.startswith("obj"):
             value = int(command.split()[1])
             motor.pos = get_angle(d=value)
-            motor.rotate(value-motor.pos)
+        else:
+            print("Commands: scan, stop, rot <value>, pos <value>, obj <value>")
         command = input("Command: ")
     
