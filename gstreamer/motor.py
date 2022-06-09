@@ -16,23 +16,25 @@ class SingletonMeta(type):
 
 @dataclass
 class Motor(metaclass=SingletonMeta):
-    _current_pos: int = 90
-    _current_pwm: float = 0.0
-    _scan: bool = False
-    _pwm0: object = None
-    sub_scan: object = None
-    __MIN_DEGREE:int = 50
-    __MAX_DEGREE:int = 130
+
+    min_degree:int = 50
+    max_degree:int = 130
     degree_to_move:int = 5
     inverted:bool = True
 
 
     def __post_init__(self):
-        self.__MIN_PWM = Motor._degree_to_pwm(self.__MIN_DEGREE)
-        self.__MAX_PWM = Motor._degree_to_pwm(self.__MAX_DEGREE)
-        self._pwm0 = PWM(0, 0)
-        self._pwm0.frequency = 50
-        self._pwm0.enable()
+        self.__MIN_PWM = Motor._degree_to_pwm(self.min_degree)
+        self.__MAX_PWM = Motor._degree_to_pwm(self.max_degree)
+        self.__pwm0 = PWM(0, 0)
+        self.__pwm0.frequency = 50
+        self.__pwm0.enable()
+        self.__range= self.max_degree - self.min_degree
+        self.__current_pos: int = 90
+        self.__current_pwm: float = 0.0
+        self.__scan: bool = False
+        self.__pwm0: object = None
+        self.__sub_scan: object = None
         self.pos = 90
 
         
@@ -43,33 +45,38 @@ class Motor(metaclass=SingletonMeta):
     def _set_pwm(self, pwm):
         pwm = min(self.__MAX_PWM, pwm)
         pwm = max(self.__MIN_PWM, pwm)
-        self._pwm0.duty_cycle = pwm
-        if self.sub_scan:
+        self.__pwm0.duty_cycle = pwm
+        if self.__sub_scan:
             self.stop_scan()
-        self._current_pwm = pwm
+        self.__current_pwm = pwm
         #print("PWM = ", pwm)
 
 
+
+    @property
+    def range(self):
+        return self.__range
+
     @property
     def pos(self):
-        return self._current_pos
+        return self.__current_pos
 
     @pos.setter
     def pos(self, degree):
-        degree = min(self.__MAX_DEGREE, degree)
-        degree = max(self.__MIN_DEGREE, degree)
+        degree = min(self.max_degree, degree)
+        degree = max(self.min_degree, degree)
         self._set_pwm(self._degree_to_pwm(degree))
-        self._current_pos = degree
+        self.__current_pos = degree
         print ("Set to ", self.pos)
 
     def rotate(self, value):
         # if self.inverted:
         #     value = -value
         if abs(value) > self.degree_to_move:
-            self.pos = self._current_pos + value
+            self.pos = self.__current_pos + value
 
     @staticmethod
-    def _scan(pwm0,
+    def __scan(pwm0,
               stop_event,
               current_pwm,
               MIN_PWM,
@@ -98,45 +105,53 @@ class Motor(metaclass=SingletonMeta):
 
 
     def scan(self):
-        if not self.sub_scan:
+        if not self.__sub_scan:
             self.stop_event = mp.Event()
             #print("Main pwm0", self._pwm0)
-            self.sub_scan = mp.Process(
-                target=Motor._scan, 
-                args=(self._pwm0,
+            self.__sub_scan = mp.Process(
+                target=Motor.__scan, 
+                args=(self.__pwm0,
                       self.stop_event,
-                      self._current_pwm,
+                      self.__current_pwm,
                       self.__MIN_PWM,
                       self.__MAX_PWM),
                 daemon=True
             )
-            self.sub_scan.start()
+            self.__sub_scan.start()
 
     def stop_scan(self):
-        if self.sub_scan:
+        if self.__sub_scan:
             self.stop_event.set()
-            self.sub_scan.terminate()
-            self.sub_scan.join()
-            self.sub_scan = None
+            self.__sub_scan.terminate()
+            self.__sub_scan.join()
+            self.__sub_scan = None
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Motor")
-    parser.add_argument("-i --inverted", action="store_true", default=False)  
-    parser.add_argument("-dtm --degree_to_move", type=int, default=5)
+    parser.add_argument("--inverted", action="store_true", default=False)  
+    parser.add_argument("--degree_to_move", type=int, default=5)
     args = parser.parse_args()
 
     motor = Motor(inverted=args.inverted, degree_to_move=args.degree_to_move)
+    
+    def get_angle(screen = (320,320), d):
+        return int(d * motor.range / screen[0])
+
     command = input("Command: ")
     while command != "exit":
         if command == "scan":
             motor.scan()
         elif command == "stop":
             motor.stop_scan()
-        elif command.startswith("rotate"):
+        elif command.startswith("rot"):
             value = int(command.split()[1])
             motor.rotate(value)
         elif command.startswith("pos"):
             value = int(command.split()[1])
+            motor.rotate(value-motor.pos)
+        elif command.startswith("obj"):
+            value = int(command.split()[1])
+            motor.pos = get_angle(d=value)
             motor.rotate(value-motor.pos)
         command = input("Command: ")
     
