@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
     motor = Motor(inverted=args.inverted, degree_to_move=args.degree_to_move)
     
-    def get_angle(screen = (320,320), d):
+    def get_angle(d, screen = (320,320)):
         return int(d * motor.range / screen[0])
 
     command = input("Command: ")
