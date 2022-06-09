@@ -1,3 +1,6 @@
+import argparse
+import rich
+
 from dataclasses import dataclass
 from periphery import PWM
 import multiprocessing as mp
@@ -60,8 +63,8 @@ class Motor(metaclass=SingletonMeta):
         print ("Set to ", self.pos)
 
     def rotate(self, value):
-        if self.inverted:
-            value = -value
+        # if self.inverted:
+        #     value = -value
         if abs(value) > self.degree_to_move:
             self.pos = self._current_pos + value
 
@@ -117,17 +120,23 @@ class Motor(metaclass=SingletonMeta):
             self.sub_scan = None
 
 if __name__ == "__main__":
-    motor = Motor(degree_to_move=5)
+    parser = argparse.ArgumentParser(description="Motor")
+    parser.add_argument("-i --inverted", action="store_true", default=False)  
+    parser.add_argument("-dtm --degree_to_move", type=int, default=5)
+    args = parser.parse_args()
+
+    motor = Motor(inverted=args.inverted, degree_to_move=args.degree_to_move)
     command = input("Command: ")
     while command != "exit":
         if command == "scan":
             motor.scan()
         elif command == "stop":
             motor.stop_scan()
-        elif command == "rotate":
-            value = int(input("Value: "))
+        elif command.startswith("rotate"):
+            value = int(command.split()[1])
             motor.rotate(value)
-        elif command == "pos":
-            print("Current pos:", motor.pos)
+        elif command.startswith("pos"):
+            value = int(command.split()[1])
+            motor.rotate(value-motor.pos)
         command = input("Command: ")
     
