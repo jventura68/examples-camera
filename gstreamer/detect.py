@@ -171,6 +171,7 @@ def main():
     last_angle = 0
     motor = Motor(inverted=True, degree_to_move=5)
     _ = input("Pulse <intro> para iniciar el proceso")
+    obj_back = None
 
 
 
@@ -179,12 +180,23 @@ def main():
         nonlocal fps_counter
         nonlocal last_detection_time
         nonlocal motor
+        nonlocal obj_back
 
         count += 1
+        if count > 1:
+            #Mantiene el mismo box en pantalla
+            if count > 10:
+                count = 0
+            if headless:
+                return None
+            else:
+                return generate_svg(src_size, inference_box, obj_back, labels, text_lines)
+
         start_time = time.monotonic()
         run_inference(interpreter, input_tensor)
         # For larger input image sizes, use the edgetpu.classification.engine for better performance
         objs = get_objects(interpreter, args.threshold)[:args.top_k]
+        obj_back = objs
         end_time = time.monotonic()
         fps = round(next(fps_counter))
         fps = count / (end_time - init_time)
