@@ -163,6 +163,8 @@ def main():
     labels = read_label_file(args.labels)
     inference_size = input_size(interpreter)
 
+    count=0
+    init_time = time.monotonic()
     # Average fps over last 30 frames.
     fps_counter = avg_fps_counter(30)
     last_detection_time = time.monotonic()
@@ -173,15 +175,19 @@ def main():
 
 
     def user_callback(input_tensor, src_size, inference_box, headless=False):
+        nonlocal count, init_time
         nonlocal fps_counter
         nonlocal last_detection_time
         nonlocal motor
+
+        count += 1
         start_time = time.monotonic()
         run_inference(interpreter, input_tensor)
         # For larger input image sizes, use the edgetpu.classification.engine for better performance
         objs = get_objects(interpreter, args.threshold)[:args.top_k]
         end_time = time.monotonic()
         fps = round(next(fps_counter))
+        fps = count / (end_time - init_time)
         text_lines = [
             'Inference: {:.2f} ms'.format((end_time - start_time) * 1000),
             'FPS: {} fps'.format(fps),
@@ -192,9 +198,15 @@ def main():
             state = objects_analysis(inference_box, objs, labels)
             last_detection_time = end_time
             last_pos = motor.pos
-            motor.rotate(state['angle']/4)
-            if last_pos != motor.pos:
+            if abs(state['angle']) < 5:
                 print("FPS", fps, "state",state)
+            else:
+                print("*", end="")
+            motor.rotate(state['angle']/4)
+            # if last_pos != motor.pos:
+            #     print("FPS", fps, "state",state)
+            # else:
+            #     print("*", end="")
         else:
             if (start_time - last_detection_time) > SEC_PANIC_TIME:
                 if not motor.scanning:
