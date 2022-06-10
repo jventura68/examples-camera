@@ -172,6 +172,7 @@ def main():
     motor = Motor(inverted=True, degree_to_move=5)
     _ = input("Pulse <intro> para iniciar el proceso")
     obj_back = None
+    text_line_back = ""
 
 
 
@@ -181,6 +182,7 @@ def main():
         nonlocal last_detection_time
         nonlocal motor
         nonlocal obj_back
+        nonlocal text_line_back
 
         count += 1
         if count > 1:
@@ -190,7 +192,7 @@ def main():
             if headless:
                 return None
             else:
-                return generate_svg(src_size, inference_box, obj_back, labels, text_lines)
+                return generate_svg(src_size, inference_box, obj_back, labels, text_line_back)
 
         start_time = time.monotonic()
         run_inference(interpreter, input_tensor)
@@ -204,7 +206,7 @@ def main():
             'Inference: {:.2f} ms'.format((end_time - start_time) * 1000),
             'FPS: {} fps'.format(fps),
         ]
-        
+        text_line_back = text_lines
         #print(' '.join(text_lines))
         if objs:
             state = objects_analysis(inference_box, objs, labels)
