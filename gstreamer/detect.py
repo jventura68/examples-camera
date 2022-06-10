@@ -198,11 +198,17 @@ def main():
             state = objects_analysis(inference_box, objs, labels)
             last_detection_time = end_time
             last_pos = motor.pos
-            if abs(state['angle']) < 5:
-                print("FPS", fps, "state",state)
+            if abs(state['angle']) > 5:
+                sentido = "IZQ" if state['angle'] > 0 else "DER"
+                print("FPS", fps, 
+                      "pos",motor.pos, 
+                      "sentido", sentido, 
+                      "ang", state['angle'], 
+                      flush=True)
+                motor.rotate(state['angle'])
             else:
-                print("*", end="")
-            motor.rotate(state['angle']/4)
+                print("*", end="", flush=True)
+            #motor.rotate(state['angle']/4)
             # if last_pos != motor.pos:
             #     print("FPS", fps, "state",state)
             # else:

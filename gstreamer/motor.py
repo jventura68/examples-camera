@@ -117,14 +117,15 @@ class Motor(metaclass=SingletonMeta):
             print ("Motor pos: {}º anterior{}º rotate {}"\
                    .format(degree, 
                            self.__current_pos,
-                           degree - self.__current_pos))
+                           degree - self.__current_pos),
+                    flush=True)
             self.__current_pos = degree
 
     def rotate(self, value):
         if self.__sub_scan:
             self.stop_scan()
             pos_global = self._pwm_to_degree(self.__global_pwm.value)
-            print("Pos local", self.pos, 'Pos global', pos_global)
+            print("Pos local", self.pos, 'Pos global', pos_global, flush=True)
             self.__current_pos = pos_global
         self.pos = self.__current_pos + value
 

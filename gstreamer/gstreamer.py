@@ -217,7 +217,8 @@ def run_pipeline(user_function,
     elif videofmt == 'jpeg':
         SRC_CAPS = 'image/jpeg,width={width},height={height},framerate=30/1'
     else:
-        SRC_CAPS = 'video/x-raw,width={width},height={height},framerate=30/1'
+        #SRC_CAPS = 'video/x-raw,width={width},height={height},framerate=30/1'
+        SRC_CAPS = 'decodebin ! videorate ! video/x-raw,framerate=7/1'
     if videosrc.startswith('/dev/video'):
         PIPELINE = 'v4l2src device=%s ! {src_caps}'%videosrc
     elif videosrc.startswith('http'):
