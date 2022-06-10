@@ -55,15 +55,15 @@ class Motor(metaclass=SingletonMeta):
     def __post_init__(self):
         self.__MIN_PWM = Motor._degree_to_pwm(self.min_degree)
         self.__MAX_PWM = Motor._degree_to_pwm(self.max_degree)
+        self.__current_pwm = self.__MIN_PWM
+        self.__global_pwm = mp.Value('d', self.__current_pwm)
         self.__pwm0 = PWM(0, 0)
         self.__pwm0.frequency = 50
         self.__pwm0.enable()
         self.__current_pos = 0
-        self.__current_pwm = self.__MIN_PWM
         self.__range= self.max_degree - self.min_degree
         self.__sub_scan: mp.Process = None
         self.pos = 90
-        self.__global_pwm = mp.Value('i', self.__current_pwm)
         self.__global_scan = mp.Value('i',0)
 
     def close(self):
@@ -178,7 +178,6 @@ class Motor(metaclass=SingletonMeta):
             self.__sub_scan.terminate()
             self.__sub_scan.join()
             self.__sub_scan = None
-            self.
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Motor")

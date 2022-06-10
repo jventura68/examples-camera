@@ -192,7 +192,7 @@ def main():
             state = objects_analysis(inference_box, objs, labels)
             last_detection_time = end_time
             last_pos = motor.pos
-            motor.rotate(state['angle'])
+            motor.rotate(state['angle']/4)
             if last_pos != motor.pos:
                 print("FPS", fps, "state",state)
         else:
